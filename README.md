@@ -237,7 +237,3 @@ Máscara 0x80
 ## Advertencia
 
 Modificar registros Modbus puede alterar parámetros de servicio de la aerotermia. Usa esta integración bajo tu responsabilidad. Antes de escribir registros desconocidos, prueba siempre en modo lectura.
-
-## Licencia
-
-MIT.
