@@ -38,7 +38,7 @@ El objetivo es tener una integración local, sin nube, con control de calefacci�
 ### Opcional
 
 - Sensor de presión analógico 0,5-4,25 V / 0-5 bar.
-- Fuente 24 V para el sensor.
+- Fuente 5 V para el sensor.
 - Divisor resistivo 10 kΩ / 20 kΩ.
 - Condensador de filtrado en GPIO34.
 
@@ -59,8 +59,8 @@ Si no comunica, invertir A y B.
 ## Sensor de presión hidráulica
 
 ```text
-Sensor rojo   -> +24 V
-Sensor negro  -> GND 24 V común con GND ESP32
+Sensor rojo   -> +5 V
+Sensor negro  -> GND 5 V común con GND ESP32
 Sensor azul   -> divisor resistivo -> GPIO34
 
 Azul sensor -> 10 kΩ -> GPIO34 -> 20 kΩ -> GND
