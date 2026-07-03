@@ -17,9 +17,9 @@ Si no comunica, invertir A y B.
 ## Sensor de presión
 
 ```text
-Sensor rojo   -> +24 V
-Sensor negro  -> GND 24 V
-Sensor azul   -> divisor resistivo
+Sensor rojo   -> +5 V
+Sensor negro  -> GND 5 V
+Sensor verde   -> divisor resistivo
 
 Azul sensor -> 10 kΩ -> GPIO34 -> 20 kΩ -> GND
 ```
