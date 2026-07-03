@@ -17,3 +17,4 @@ Primera versión preparada para GitHub.
 - Sensor de presión analógico externo.
 - COP/EER calculado.
 - Documentación inicial.
+- Dashboard general y diagnosticos creadas
