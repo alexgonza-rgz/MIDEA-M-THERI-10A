@@ -1,0 +1,211 @@
+# ==================================================
+# 40_SWITCHES
+# ==================================================
+# Interruptores de funciones.
+#
+# Actualizado con registros del heatpump.yaml:
+# - Modo silencioso: registro 0x05 bit 6 -> 0x40
+# - Nivel silencioso: registro 0x05 bit 7 -> 0x80
+# - Curva climática zona 1: registro 0x05 bit 12 -> 0x1000
+# - ACS rápida / forzar calentamiento ACS: registro 0x07, escribe 1 ON y 2 OFF
+
+switch:
+  - platform: template
+    name: "Calefacción/refrigeración zona 1"
+    id: "${devicename}_activar_clima_zona_1"
+    icon: mdi:home-thermometer
+    entity_category: config
+    restore_mode: DISABLED
+    optimistic: true
+    lambda: |-
+      return (id(reg_0_potencias) & 0x2) == 0x2;
+    on_turn_on:
+      - lambda: |-
+          uint16_t new_value = id(reg_0_potencias) | 0x2;
+          id(reg_0_potencias) = new_value;
+          auto cmd =
+            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
+              ${devicename}, 0x0, new_value
+            );
+          ${devicename}->queue_command(cmd);
+    on_turn_off:
+      - lambda: |-
+          uint16_t new_value = id(reg_0_potencias) & ~0x2;
+          id(reg_0_potencias) = new_value;
+          auto cmd =
+            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
+              ${devicename}, 0x0, new_value
+            );
+          ${devicename}->queue_command(cmd);
+
+  - platform: template
+    name: "ACS activada"
+    id: "${devicename}_activar_acs"
+    icon: mdi:water-boiler
+    entity_category: config
+    restore_mode: DISABLED
+    optimistic: true
+    lambda: |-
+      return (id(reg_0_potencias) & 0x4) == 0x4;
+    on_turn_on:
+      - lambda: |-
+          uint16_t new_value = id(reg_0_potencias) | 0x4;
+          id(reg_0_potencias) = new_value;
+          auto cmd =
+            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
+              ${devicename}, 0x0, new_value
+            );
+          ${devicename}->queue_command(cmd);
+    on_turn_off:
+      - lambda: |-
+          uint16_t new_value = id(reg_0_potencias) & ~0x4;
+          id(reg_0_potencias) = new_value;
+          auto cmd =
+            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
+              ${devicename}, 0x0, new_value
+            );
+          ${devicename}->queue_command(cmd);
+
+  # ACS rápida / forzar calentamiento del depósito.
+  # Registro 0x07:
+  #   1 = ON
+  #   2 = OFF
+  - platform: template
+    name: "ACS rápida"
+    id: "${devicename}_acs_rapida"
+    icon: mdi:water-boiler-alert
+    entity_category: config
+    restore_mode: DISABLED
+    optimistic: true
+    turn_on_action:
+      - lambda: |-
+          auto cmd =
+            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
+              ${devicename}, 0x7, 1
+            );
+          ${devicename}->queue_command(cmd);
+    turn_off_action:
+      - lambda: |-
+          auto cmd =
+            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
+              ${devicename}, 0x7, 2
+            );
+          ${devicename}->queue_command(cmd);
+
+  # Curva climática zona 1.
+  # Antes estaba en registro 0x00 bit 0x08, pero el YAML de referencia
+  # confirma que es registro 0x05 bit 12.
+  - platform: template
+    name: "Curva climática zona 1"
+    id: "${devicename}_curva_climatica_zona_1"
+    icon: mdi:chart-bell-curve
+    entity_category: config
+    restore_mode: DISABLED
+    optimistic: true
+    lambda: |-
+      return (id(reg_5_funciones) & 0x1000) == 0x1000;
+    on_turn_on:
+      - lambda: |-
+          uint16_t new_value = id(reg_5_funciones) | 0x1000;
+          id(reg_5_funciones) = new_value;
+          auto cmd =
+            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
+              ${devicename}, 0x5, new_value
+            );
+          ${devicename}->queue_command(cmd);
+    on_turn_off:
+      - lambda: |-
+          uint16_t new_value = id(reg_5_funciones) & ~0x1000;
+          id(reg_5_funciones) = new_value;
+          auto cmd =
+            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
+              ${devicename}, 0x5, new_value
+            );
+          ${devicename}->queue_command(cmd);
+
+  - platform: template
+    name: "Modo silencioso"
+    id: "${devicename}_modo_silencioso"
+    icon: mdi:volume-off
+    entity_category: config
+    restore_mode: DISABLED
+    optimistic: true
+    lambda: |-
+      return (id(reg_5_funciones) & 0x40) == 0x40;
+    on_turn_on:
+      - lambda: |-
+          uint16_t new_value = id(reg_5_funciones) | 0x40;
+          id(reg_5_funciones) = new_value;
+          auto cmd =
+            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
+              ${devicename}, 0x5, new_value
+            );
+          ${devicename}->queue_command(cmd);
+    on_turn_off:
+      - lambda: |-
+          uint16_t new_value = id(reg_5_funciones) & ~0x40;
+          id(reg_5_funciones) = new_value;
+          auto cmd =
+            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
+              ${devicename}, 0x5, new_value
+            );
+          ${devicename}->queue_command(cmd);
+
+  # Nivel de modo silencioso.
+  # El mapa lo marca como registro 0x05 bit 7.
+  # Es binario: nivel normal/bajo o nivel alto, según cómo lo muestre la máquina.
+  - platform: template
+    name: "Nivel modo silencioso alto"
+    id: "${devicename}_nivel_modo_silencioso_alto"
+    icon: mdi:volume-low
+    entity_category: config
+    restore_mode: DISABLED
+    optimistic: true
+    lambda: |-
+      return (id(reg_5_funciones) & 0x80) == 0x80;
+    on_turn_on:
+      - lambda: |-
+          uint16_t new_value = id(reg_5_funciones) | 0x80;
+          id(reg_5_funciones) = new_value;
+          auto cmd =
+            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
+              ${devicename}, 0x5, new_value
+            );
+          ${devicename}->queue_command(cmd);
+    on_turn_off:
+      - lambda: |-
+          uint16_t new_value = id(reg_5_funciones) & ~0x80;
+          id(reg_5_funciones) = new_value;
+          auto cmd =
+            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
+              ${devicename}, 0x5, new_value
+            );
+          ${devicename}->queue_command(cmd);
+
+  - platform: template
+    name: "Modo ECO"
+    id: "${devicename}_modo_eco"
+    icon: mdi:leaf
+    entity_category: config
+    restore_mode: DISABLED
+    optimistic: true
+    lambda: |-
+      return (id(reg_5_funciones) & 0x400) == 0x400;
+    on_turn_on:
+      - lambda: |-
+          uint16_t new_value = id(reg_5_funciones) | 0x400;
+          id(reg_5_funciones) = new_value;
+          auto cmd =
+            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
+              ${devicename}, 0x5, new_value
+            );
+          ${devicename}->queue_command(cmd);
+    on_turn_off:
+      - lambda: |-
+          uint16_t new_value = id(reg_5_funciones) & ~0x400;
+          id(reg_5_funciones) = new_value;
+          auto cmd =
+            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
+              ${devicename}, 0x5, new_value
+            );
+          ${devicename}->queue_command(cmd);

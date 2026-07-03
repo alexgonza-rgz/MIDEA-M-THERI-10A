@@ -1,0 +1,44 @@
+# ==================================================
+# 90_PRESSURE
+# ==================================================
+# Sensor de presión analógico de caldera vieja.
+#
+# Sensor:
+# - Alimentación: 8.5-30 VDC, recomendado 24 VDC
+# - Salida: 0.5-4.25 V
+# - Rango: 0-5 bar
+#
+# Cableado:
+# Rojo  -> +24 V
+# Negro -> GND fuente 24 V y GND ESP32 común
+# Azul  -> divisor resistivo -> GPIO34
+#
+# Divisor:
+# Azul sensor -> 10 kΩ -> GPIO34 -> 20 kΩ -> GND
+#
+# Calibración:
+# reloj 2.00 bar -> lectura previa 1.82 bar
+# reloj 2.65 bar -> lectura previa 2.43 bar
+
+sensor:
+  - platform: adc
+    pin: GPIO34
+    name: "Presión circuito calefacción"
+    id: "${devicename}_presion_circuito_calefaccion"
+    icon: mdi:gauge
+    attenuation: 12db
+    update_interval: 10s
+    unit_of_measurement: "bar"
+    device_class: pressure
+    state_class: measurement
+    accuracy_decimals: 2
+    filters:
+      - multiply: 1.5
+      - calibrate_linear:
+          - 0.5 -> 0.0
+          - 1.865 -> 2.0
+          - 2.3225 -> 2.65
+          - 4.25 -> 5.0
+      - clamp:
+          min_value: 0.0
+          max_value: 5.0

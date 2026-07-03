@@ -1,0 +1,16 @@
+type: entities
+title: Midea M-Theri
+entities:
+  - sensor.aerotermia_estado_real
+  - sensor.aerotermia_resumen_aerotermia
+  - select.aerotermia_modo_de_trabajo
+  - number.aerotermia_consigna_agua_calefaccion_zona_1
+  - number.aerotermia_consigna_agua_refrigeracion_zona_1
+  - number.aerotermia_consigna_acs
+  - switch.aerotermia_acs_rapida
+  - switch.aerotermia_modo_silencioso
+  - switch.aerotermia_nivel_modo_silencioso_alto
+  - switch.aerotermia_modo_eco
+  - switch.aerotermia_curva_climatica_zona_1
+  - sensor.aerotermia_cop_instantaneo
+  - sensor.aerotermia_presion_circuito_calefaccion

@@ -1,0 +1,179 @@
+# ==================================================
+# 30_CONTROLS
+# ==================================================
+# Controles principales: modo, consignas y modos de instalación.
+
+select:
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Modo de trabajo"
+    id: "${devicename}_modo_trabajo"
+    icon: mdi:heat-pump
+    address: 0x1
+    value_type: U_WORD
+    optimistic: true
+    optionsmap:
+      "Auto": 1
+      "Frío": 2
+      "Calor": 3
+
+  # Registro 0x110:
+  # bits 0-3  -> emisor calefacción zona 1
+  # bits 8-11 -> emisor refrigeración zona 1
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Zona 1 modo instalación calefacción"
+    id: "${devicename}_zona_1_modo_instalacion_calefaccion"
+    icon: mdi:radiator
+    address: 0x110
+    value_type: U_WORD
+    entity_category: config
+    optimistic: true
+    optionsmap:
+      "Fancoil": 0
+      "Radiador": 1
+      "Suelo radiante": 2
+    lambda: |-
+      id(reg_272_modos_instalacion) = x;
+      uint8_t zone1_h = x & 0xF;
+      if (zone1_h == 0) return std::string("Fancoil");
+      if (zone1_h == 1) return std::string("Radiador");
+      if (zone1_h == 2) return std::string("Suelo radiante");
+      return std::string("Desconocido: ") + std::to_string(zone1_h);
+    write_lambda: |-
+      uint16_t new_value = id(reg_272_modos_instalacion);
+      uint8_t value_byte = value;
+      new_value &= 0xFFF0;
+      new_value |= value_byte;
+      id(reg_272_modos_instalacion) = new_value;
+      auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(${devicename}, 0x110, new_value);
+      ${devicename}->queue_command(cmd);
+      return {};
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Zona 1 modo instalación refrigeración"
+    id: "${devicename}_zona_1_modo_instalacion_refrigeracion"
+    icon: mdi:snowflake-thermometer
+    address: 0x110
+    value_type: U_WORD
+    entity_category: config
+    optimistic: true
+    optionsmap:
+      "Fancoil": 0
+      "Radiador": 1
+      "Suelo radiante": 2
+    lambda: |-
+      id(reg_272_modos_instalacion) = x;
+      uint8_t zone1_c = (x >> 8) & 0xF;
+      if (zone1_c == 0) return std::string("Fancoil");
+      if (zone1_c == 1) return std::string("Radiador");
+      if (zone1_c == 2) return std::string("Suelo radiante");
+      return std::string("Desconocido: ") + std::to_string(zone1_c);
+    write_lambda: |-
+      uint16_t new_value = id(reg_272_modos_instalacion);
+      uint8_t value_byte = value;
+      new_value &= 0xF0FF;
+      new_value |= (value_byte << 8);
+      id(reg_272_modos_instalacion) = new_value;
+      auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(${devicename}, 0x110, new_value);
+      ${devicename}->queue_command(cmd);
+      return {};
+
+number:
+  # Registro 0x02:
+  # byte bajo  -> consigna agua en calefacción
+  # byte alto  -> consigna agua en refrigeración
+  #
+  # Así evitamos un único slider 5-60 °C que en modo frío deja seleccionar valores imposibles.
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Consigna agua calefacción zona 1"
+    id: "${devicename}_consigna_agua_calefaccion_zona_1"
+    icon: mdi:radiator
+    register_type: holding
+    address: 0x2
+    value_type: U_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    entity_category: config
+    min_value: 25
+    max_value: 60
+    step: 1
+    mode: slider
+    lambda: |-
+      id(reg_2_consigna_agua) = x;
+      return uint16_t(x) & 0x00FF;
+    write_lambda: |-
+      uint16_t value = id(reg_2_consigna_agua);
+      uint8_t value_byte = uint8_t(x);
+      value &= 0xFF00;
+      value |= value_byte;
+      id(reg_2_consigna_agua) = value;
+      auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(${devicename}, 0x2, value);
+      ${devicename}->queue_command(cmd);
+      return {};
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Consigna agua refrigeración zona 1"
+    id: "${devicename}_consigna_agua_refrigeracion_zona_1"
+    icon: mdi:snowflake-thermometer
+    register_type: holding
+    address: 0x2
+    value_type: U_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    entity_category: config
+    min_value: 5
+    max_value: 25
+    step: 1
+    mode: slider
+    lambda: |-
+      id(reg_2_consigna_agua) = x;
+      return (uint16_t(x) >> 8) & 0x00FF;
+    write_lambda: |-
+      uint16_t value = id(reg_2_consigna_agua);
+      uint8_t value_byte = uint8_t(x);
+      value &= 0x00FF;
+      value |= (uint16_t(value_byte) << 8);
+      id(reg_2_consigna_agua) = value;
+      auto cmd = esphome::modbus_controller::ModbusCommandItem::create_write_single_command(${devicename}, 0x2, value);
+      ${devicename}->queue_command(cmd);
+      return {};
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Consigna ambiente"
+    id: "${devicename}_consigna_ambiente"
+    icon: mdi:home-thermometer
+    register_type: holding
+    address: 0x3
+    value_type: U_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    entity_category: config
+    min_value: 17
+    max_value: 30
+    step: 0.5
+    mode: slider
+    lambda: |-
+      return x * 0.5;
+    write_lambda: |-
+      return x * 2.0;
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Consigna ACS"
+    id: "${devicename}_consigna_acs"
+    icon: mdi:water-thermometer
+    register_type: holding
+    address: 0x4
+    value_type: U_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    entity_category: config
+    min_value: 20
+    max_value: 60
+    step: 1
+    mode: slider

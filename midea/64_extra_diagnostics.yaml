@@ -1,0 +1,174 @@
+# ==================================================
+# 64_EXTRA_DIAGNOSTICS
+# ==================================================
+# Diagnóstico adicional sacado del heatpump.yaml.
+# Son sensores de solo lectura. No toca consignas, presión ni controles.
+
+sensor:
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Apertura válvula electrónica PMV"
+    id: "${devicename}_apertura_valvula_pmv"
+    icon: mdi:valve
+    register_type: holding
+    address: 0x67
+    value_type: U_WORD
+    entity_category: diagnostic
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Temperatura condensador T3"
+    id: "${devicename}_temperatura_condensador_t3"
+    icon: mdi:thermometer
+    register_type: holding
+    address: 0x6A
+    value_type: S_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    state_class: measurement
+    entity_category: diagnostic
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Temperatura retorno aire"
+    id: "${devicename}_temperatura_retorno_aire"
+    icon: mdi:home-thermometer
+    register_type: holding
+    address: 0x6D
+    value_type: S_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    state_class: measurement
+    entity_category: diagnostic
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Temperatura salida total T1"
+    id: "${devicename}_temperatura_salida_total_t1"
+    icon: mdi:thermometer-water
+    register_type: holding
+    address: 0x6E
+    value_type: S_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    state_class: measurement
+    entity_category: diagnostic
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Temperatura salida sistema T1B"
+    id: "${devicename}_temperatura_salida_sistema_t1b"
+    icon: mdi:thermometer-water
+    register_type: holding
+    address: 0x6F
+    value_type: S_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    state_class: measurement
+    entity_category: diagnostic
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Temperatura refrigerante líquido T2"
+    id: "${devicename}_temperatura_refrigerante_liquido_t2"
+    icon: mdi:snowflake-thermometer
+    register_type: holding
+    address: 0x70
+    value_type: S_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    state_class: measurement
+    entity_category: diagnostic
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Temperatura refrigerante gas T2B"
+    id: "${devicename}_temperatura_refrigerante_gas_t2b"
+    icon: mdi:snowflake-thermometer
+    register_type: holding
+    address: 0x71
+    value_type: S_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    state_class: measurement
+    entity_category: diagnostic
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Temperatura ambiente Ta"
+    id: "${devicename}_temperatura_ambiente_ta"
+    icon: mdi:home-thermometer
+    register_type: holding
+    address: 0x72
+    value_type: S_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    state_class: measurement
+    entity_category: diagnostic
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Corriente bus DC"
+    id: "${devicename}_corriente_bus_dc"
+    icon: mdi:current-dc
+    register_type: holding
+    address: 0x85
+    value_type: U_WORD
+    unit_of_measurement: "A"
+    device_class: current
+    state_class: measurement
+    entity_category: diagnostic
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Tensión bus DC"
+    id: "${devicename}_tension_bus_dc"
+    icon: mdi:flash-triangle
+    register_type: holding
+    address: 0x86
+    value_type: U_WORD
+    unit_of_measurement: "V"
+    device_class: voltage
+    state_class: measurement
+    entity_category: diagnostic
+    filters:
+      - multiply: 10
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Temperatura módulo inverter"
+    id: "${devicename}_temperatura_modulo_inverter"
+    icon: mdi:chip
+    register_type: holding
+    address: 0x87
+    value_type: S_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    state_class: measurement
+    entity_category: diagnostic
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Curva climática T1S calculada zona 1"
+    id: "${devicename}_curva_climatica_t1s_calculada_zona_1"
+    icon: mdi:chart-bell-curve
+    register_type: holding
+    address: 0x88
+    value_type: S_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    state_class: measurement
+    entity_category: diagnostic
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Curva climática T1S calculada zona 2"
+    id: "${devicename}_curva_climatica_t1s_calculada_zona_2"
+    icon: mdi:chart-bell-curve
+    register_type: holding
+    address: 0x89
+    value_type: S_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    state_class: measurement
+    entity_category: diagnostic

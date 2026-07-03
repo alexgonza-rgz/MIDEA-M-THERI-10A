@@ -1,0 +1,125 @@
+# ==================================================
+# 70_BINARY_SENSORS
+# ==================================================
+
+binary_sensor:
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Desescarche activo"
+    id: "${devicename}_desescarche_activo"
+    icon: mdi:snowflake-melt
+    register_type: holding
+    address: 0x80
+    bitmask: 0x2
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Retorno de aceite activo"
+    id: "${devicename}_retorno_aceite_activo"
+    icon: mdi:oil
+    register_type: holding
+    address: 0x80
+    bitmask: 0x8
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Resistencia apoyo IBH1"
+    id: "${devicename}_resistencia_ibh1"
+    icon: mdi:heat-wave
+    register_type: holding
+    address: 0x81
+    bitmask: 0x1
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Resistencia depósito TBH"
+    id: "${devicename}_resistencia_tbh"
+    icon: mdi:water-boiler
+    register_type: holding
+    address: 0x81
+    bitmask: 0x4
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Bomba interna funcionando"
+    id: "${devicename}_bomba_interna_funcionando"
+    icon: mdi:pump
+    register_type: holding
+    address: 0x81
+    bitmask: 0x8
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Válvula ACS activa"
+    id: "${devicename}_valvula_acs_activa"
+    icon: mdi:valve
+    register_type: holding
+    address: 0x81
+    bitmask: 0x10
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Bomba exterior funcionando"
+    id: "${devicename}_bomba_exterior_funcionando"
+    icon: mdi:pump
+    register_type: holding
+    address: 0x81
+    bitmask: 0x40
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Alarma activa"
+    id: "${devicename}_alarma_activa"
+    icon: mdi:alarm-light
+    register_type: holding
+    address: 0x81
+    bitmask: 0x1000
+    device_class: problem
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Máquina en marcha"
+    id: "${devicename}_maquina_en_marcha"
+    icon: mdi:run
+    register_type: holding
+    address: 0x81
+    bitmask: 0x2000
+
+  - platform: template
+    name: "ACS rápida activa"
+    id: "${devicename}_acs_rapida_activa"
+    icon: mdi:water-boiler-alert
+    lambda: |-
+      return (id(reg_0_potencias) & 0x10) == 0x10;
+
+  - platform: template
+    name: "Curva climática activa"
+    id: "${devicename}_curva_climatica_activa"
+    icon: mdi:chart-bell-curve
+    lambda: |-
+      return (id(reg_0_potencias) & 0x8) == 0x8;
+
+  - platform: template
+    name: "Compresor funcionando"
+    id: "${devicename}_compresor_funcionando"
+    device_class: running
+    lambda: |-
+      return id(${devicename}_frecuencia_compresor).state > 0;
+
+  - platform: template
+    name: "Presión calefacción baja"
+    id: "${devicename}_presion_calefaccion_baja"
+    device_class: problem
+    lambda: |-
+      float p = id(${devicename}_presion_circuito_calefaccion).state;
+      if (isnan(p)) return false;
+      return p < 0.8;
+
+  - platform: template
+    name: "Presión calefacción alta"
+    id: "${devicename}_presion_calefaccion_alta"
+    device_class: problem
+    lambda: |-
+      float p = id(${devicename}_presion_circuito_calefaccion).state;
+      if (isnan(p)) return false;
+      return p > 2.8;

@@ -1,0 +1,42 @@
+# ==================================================
+# 61_WATER
+# ==================================================
+
+sensor:
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Caudal de agua"
+    id: "${devicename}_caudal_agua"
+    icon: mdi:waves-arrow-right
+    register_type: holding
+    address: 0x8A
+    value_type: U_WORD
+    unit_of_measurement: "m³/h"
+    accuracy_decimals: 2
+    state_class: measurement
+    filters:
+      - lambda: return x * 0.01;
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Presión alta refrigerante"
+    id: "${devicename}_presion_alta_refrigerante"
+    icon: mdi:gauge
+    register_type: holding
+    address: 0x74
+    value_type: U_WORD
+    unit_of_measurement: "kPa"
+    device_class: pressure
+    state_class: measurement
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Presión baja refrigerante"
+    id: "${devicename}_presion_baja_refrigerante"
+    icon: mdi:gauge-low
+    register_type: holding
+    address: 0x75
+    value_type: U_WORD
+    unit_of_measurement: "kPa"
+    device_class: pressure
+    state_class: measurement

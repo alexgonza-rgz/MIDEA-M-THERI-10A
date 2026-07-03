@@ -1,0 +1,60 @@
+# ==================================================
+# 63_ENERGY
+# ==================================================
+
+sensor:
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Potencia térmica módulo hidráulico"
+    id: "${devicename}_potencia_termica_modulo_hidraulico"
+    icon: mdi:heat-wave
+    register_type: holding
+    address: 0x8C
+    value_type: U_WORD
+    unit_of_measurement: "kW"
+    accuracy_decimals: 2
+    state_class: measurement
+    filters:
+      - lambda: return x * 0.01;
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Energía eléctrica consumida"
+    id: "${devicename}_energia_electrica_consumida"
+    icon: mdi:lightning-bolt-outline
+    register_type: holding
+    address: 0x8F
+    value_type: U_DWORD
+    unit_of_measurement: "kWh"
+    device_class: energy
+    state_class: total_increasing
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Energía térmica producida"
+    id: "${devicename}_energia_termica_producida"
+    icon: mdi:radiator
+    register_type: holding
+    address: 0x91
+    value_type: U_DWORD
+    unit_of_measurement: "kWh"
+    device_class: energy
+    state_class: total_increasing
+
+  # Candidato encontrado con sniffer: R147.
+  # Ajustar escala si no cuadra con vatímetro real.
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Potencia eléctrica instantánea"
+    id: "${devicename}_potencia_electrica_instantanea"
+    icon: mdi:flash
+    register_type: holding
+    address: 0x93
+    value_type: U_WORD
+    unit_of_measurement: "kW"
+    device_class: power
+    state_class: measurement
+    accuracy_decimals: 2
+    entity_category: diagnostic
+    filters:
+      - lambda: return x * 0.01;

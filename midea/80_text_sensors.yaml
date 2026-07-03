@@ -1,0 +1,70 @@
+# ==================================================
+# 80_TEXT_SENSORS
+# ==================================================
+
+text_sensor:
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Modo actual leído"
+    id: "${devicename}_modo_actual_leido"
+    icon: mdi:state-machine
+    register_type: holding
+    address: 0x65
+    response_size: 2
+    lambda: |-
+      int idx = item->offset;
+      uint16_t v = (uint16_t(data[idx]) << 8) + uint16_t(data[idx + 1]);
+      if (v == 0) return std::string("Apagada");
+      if (v == 2) return std::string("Frío");
+      if (v == 3) return std::string("Calor");
+      if (v == 5) return std::string("Calentando ACS");
+      return std::string("Desconocido: ") + std::to_string(v);
+
+  - platform: template
+    name: "Estado real"
+    id: "${devicename}_estado_real"
+    icon: mdi:information
+    update_interval: 10s
+    lambda: |-
+      if (id(${devicename}_modo_actual_leido).state == "Apagada") return std::string("Apagada");
+      if (id(${devicename}_desescarche_activo).state) return std::string("Desescarche");
+      if (id(${devicename}_retorno_aceite_activo).state) return std::string("Retorno de aceite");
+      if (id(${devicename}_valvula_acs_activa).state) return std::string("ACS");
+      if (id(${devicename}_maquina_en_marcha).state) return id(${devicename}_modo_actual_leido).state;
+      return std::string("En espera");
+
+  - platform: template
+    name: "Diagnóstico R148 HEX"
+    id: "${devicename}_diagnostico_r148_hex"
+    icon: mdi:code-braces
+    entity_category: diagnostic
+    update_interval: 10s
+    lambda: |-
+      uint16_t v = uint16_t(id(${devicename}_diagnostico_r148).state);
+      char buffer[48];
+      snprintf(buffer, sizeof(buffer), "DEC:%u HEX:0x%04X HI:%u LO:%u",
+               v,
+               v,
+               uint8_t((v >> 8) & 0xFF),
+               uint8_t(v & 0xFF));
+      return std::string(buffer);
+
+  - platform: template
+    name: "Resumen aerotermia"
+    id: "${devicename}_resumen_aerotermia"
+    icon: mdi:text-box-search
+    update_interval: 10s
+    lambda: |-
+      char buffer[280];
+      snprintf(buffer, sizeof(buffer),
+        "%s | Ida %.1f°C | Ret %.1f°C | ACS %.1f°C | Comp %.0fHz | Caudal %.2fm³/h | COPi %.2f | P %.2fbar",
+        id(${devicename}_estado_real).state.c_str(),
+        id(${devicename}_temperatura_impulsion_agua).state,
+        id(${devicename}_temperatura_retorno_agua).state,
+        id(${devicename}_temperatura_deposito_acs).state,
+        id(${devicename}_frecuencia_compresor).state,
+        id(${devicename}_caudal_agua).state,
+        id(${devicename}_cop_instantaneo).state,
+        id(${devicename}_presion_circuito_calefaccion).state
+      );
+      return std::string(buffer);

@@ -1,0 +1,46 @@
+# ==================================================
+# 92_CLIMATE_CURVE
+# ==================================================
+# Curva climática.
+#
+# NOTA IMPORTANTE:
+# Los registros 0x12/0x13 y 0x16/0x17 han sido retirados porque tu Midea
+# responde con excepción Modbus 2: "Illegal Data Address".
+# Es decir, esos registros NO existen o no son accesibles en tu unidad.
+#
+# Por eso dejamos solo los registros que sí han respondido correctamente:
+# - 0x06 -> Curva climática calefacción/refrigeración zona 1
+# - El switch de activación está en 40_switches.yaml
+
+number:
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Curva climática calefacción zona 1"
+    id: "${devicename}_curva_calefaccion_z1"
+    icon: mdi:chart-bell-curve
+    register_type: holding
+    address: 0x6
+    value_type: U_WORD
+    entity_category: config
+    min_value: 0
+    max_value: 9
+    step: 1
+    mode: slider
+    lambda: |-
+      return uint16_t(x) & 0x000F;
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Curva climática refrigeración zona 1"
+    id: "${devicename}_curva_refrigeracion_z1"
+    icon: mdi:chart-bell-curve
+    register_type: holding
+    address: 0x6
+    value_type: U_WORD
+    entity_category: config
+    min_value: 0
+    max_value: 9
+    step: 1
+    mode: slider
+    lambda: |-
+      return (uint16_t(x) >> 8) & 0x000F;
