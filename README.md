@@ -237,3 +237,32 @@ Máscara 0x80
 ## Advertencia
 
 Modificar registros Modbus puede alterar parámetros de servicio de la aerotermia. Usa esta integración bajo tu responsabilidad. Antes de escribir registros desconocidos, prueba siempre en modo lectura.
+
+## Dashboard Lovelace
+
+El proyecto incluye un dashboard listo para Home Assistant.
+
+Se encuentra en:
+
+docs/dashboard.yaml
+
+Características:
+
+- Resumen de la aerotermia
+- Diagnóstico
+- Energía
+- COP
+- Curva climática
+- ACS
+- Compresor
+
+
+## Dashboard
+
+### Resumen
+
+![Resumen](docs/images/dashboard_resumen.png)
+
+### Diagnóstico
+
+![Diagnóstico](docs/images/dashboard_diagnostico.png)
