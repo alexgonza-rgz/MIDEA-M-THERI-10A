@@ -28,9 +28,6 @@ sensor:
       float ida = id(${devicename}_temperatura_impulsion_agua).state;
       float retorno = id(${devicename}_temperatura_retorno_agua).state;
 
-      // Delta real con signo:
-      // Calor: positivo si ida > retorno.
-      // Frío: negativo si ida < retorno.
       return ida - retorno;
 
   - platform: template
@@ -57,19 +54,15 @@ sensor:
         return 0.0;
       }
 
-      // En calefacción la ida debe ser mayor que el retorno.
       if (id(${devicename}_modo_actual_leido).state == "Calor") {
         delta = ida - retorno;
       }
-      // En refrigeración la ida debe ser menor que el retorno.
       else if (id(${devicename}_modo_actual_leido).state == "Frío") {
         delta = retorno - ida;
       }
-      // En ACS también consideramos potencia positiva si ida > retorno.
       else if (id(${devicename}_modo_actual_leido).state == "Calentando ACS") {
         delta = ida - retorno;
       }
-      // Si está apagada/en espera, no calculamos potencia.
       else {
         return 0.0;
       }
@@ -86,22 +79,33 @@ sensor:
     icon: mdi:speedometer
     unit_of_measurement: "COP"
     accuracy_decimals: 2
+    state_class: measurement
     update_interval: 10s
     lambda: |-
-      // Preferimos la potencia del módulo hidráulico si viene informada,
-      // porque en frío el registro ya está dando valores coherentes.
       float p_termica_modulo = id(${devicename}_potencia_termica_modulo_hidraulico).state;
       float p_termica_calc = id(${devicename}_potencia_termica_calculada).state;
       float p_electrica = id(${devicename}_potencia_electrica_instantanea).state;
 
       float p_termica = p_termica_calc;
 
+      // Si la máquina está parada, devolvemos 0.
+      if (!id(${devicename}_maquina_en_marcha).state) {
+        return 0.0;
+      }
+
+      // Preferimos la potencia térmica medida por el módulo hidráulico.
       if (!isnan(p_termica_modulo) && p_termica_modulo > 0.05) {
         p_termica = p_termica_modulo;
       }
 
-      if (isnan(p_termica) || isnan(p_electrica) || p_termica <= 0.05 || p_electrica <= 0.05) {
-        return NAN;
+      // Si falta algún dato, devolvemos 0.
+      if (isnan(p_termica) || isnan(p_electrica)) {
+        return 0.0;
+      }
+
+      // Evitamos divisiones por cero.
+      if (p_termica <= 0.05 || p_electrica <= 0.05) {
+        return 0.0;
       }
 
       return p_termica / p_electrica;
@@ -112,13 +116,14 @@ sensor:
     icon: mdi:chart-line
     unit_of_measurement: "COP"
     accuracy_decimals: 2
+    state_class: measurement
     update_interval: 30s
     lambda: |-
       float consumo = id(${devicename}_energia_electrica_consumida).state;
       float producida = id(${devicename}_energia_termica_producida).state;
 
-      if (isnan(consumo) || isnan(producida) || consumo <= 0) {
-        return NAN;
+      if (isnan(consumo) || isnan(producida) || consumo <= 0.01) {
+        return 0.0;
       }
 
       return producida / consumo;
