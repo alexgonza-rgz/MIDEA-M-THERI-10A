@@ -22,7 +22,7 @@ Control local de aerotermias **Midea M-Theri** mediante **ESP32**, sin depender 
 
 # 📖 Descripción
 
-Esta integración permite controlar y monitorizar una **Midea M-Theri** directamente desde **Home Assistant** mediante **ESPHome + RS485 Modbus RTU**, sin utilizar la nube del fabricante.
+Esta integración permite controlar y monitorizar una **Midea M-TheriA** directamente desde **Home Assistant** mediante **ESPHome + RS485 Modbus RTU**, sin utilizar la nube del fabricante.
 
 El proyecto está desarrollado con una arquitectura modular para facilitar su mantenimiento y ampliación, incluyendo sensores calculados, registros de ingeniería y funciones avanzadas.
 
@@ -229,7 +229,7 @@ Actualmente validado con:
 
 | Equipo | Estado |
 |---------|:------:|
-| Midea M-Theri Ultimate 10 kW | ✅ |
+| Midea M-Theri 10 A  | ✅ |
 | ESP32 | ✅ |
 | ESPHome | ✅ |
 | Home Assistant | ✅ |
