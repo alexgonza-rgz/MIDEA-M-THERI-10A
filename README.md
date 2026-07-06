@@ -159,10 +159,8 @@ MIDEA-M-THERI/
 │
 ├── README.md
 ├── LICENSE
-├── CHANGELOG.md
 ├── ROADMAP.md
 ├── TODO.md
-├── CONTRIBUTING.md
 ├── .gitignore
 │
 ├── esphome/
@@ -280,7 +278,6 @@ Las contribuciones son bienvenidas.
 
 Antes de abrir un Pull Request consulta:
 
-- `CONTRIBUTING.md`
 - `ROADMAP.md`
 - `TODO.md`
 
