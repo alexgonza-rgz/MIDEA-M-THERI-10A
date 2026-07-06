@@ -1,0 +1,11 @@
+# ESPHome
+.esphome/
+secrets.yaml
+*.bin
+*.elf
+*.ota.bin
+*.factory.bin
+
+# OS
+.DS_Store
+Thumbs.db

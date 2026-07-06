@@ -1,0 +1,303 @@
+title: Aerotermia
+views:
+  - title: Resumen
+    path: resumen
+    icon: mdi:heat-pump
+    type: masonry
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: entities
+            title: Midea M-Theri Ultimate
+            show_header_toggle: false
+            entities:
+              - entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_estado_real
+                name: Estado real
+                icon: mdi:heat-pump
+              - entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_modo_actual_leido
+                name: Modo actual
+                icon: mdi:format-list-bulleted
+              - entity: >-
+                  binary_sensor.climatizacion_y_luces_midea_m_theri_ultimate_maquina_en_marcha
+                name: Máquina en marcha
+                icon: mdi:power
+              - entity: >-
+                  binary_sensor.climatizacion_y_luces_midea_m_theri_ultimate_compresor_funcionando
+                name: Compresor
+                icon: mdi:cog
+              - entity: >-
+                  binary_sensor.climatizacion_y_luces_midea_m_theri_ultimate_alarma_activa
+                name: Alarma
+                icon: mdi:alert-circle
+              - entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_codigo_de_error_actual
+                name: Código de error
+                icon: mdi:alert
+          - type: grid
+            title: Temperaturas principales
+            columns: 2
+            square: false
+            cards:
+              - type: tile
+                entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_temperatura_impulsion_agua
+                name: Impulsión
+                icon: mdi:thermometer-chevron-up
+              - type: tile
+                entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_temperatura_retorno_agua
+                name: Retorno
+                icon: mdi:thermometer-chevron-down
+              - type: tile
+                entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_temperatura_exterior
+                name: Exterior
+                icon: mdi:home-thermometer-outline
+              - type: tile
+                entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_temperatura_deposito_acs
+                name: Depósito ACS
+                icon: mdi:water-boiler
+              - type: tile
+                entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_delta_t_agua
+                name: ΔT agua
+                icon: mdi:delta
+              - type: tile
+                entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_temperatura_descarga_compresor
+                name: Descarga compresor
+                icon: mdi:thermometer-alert
+      - type: vertical-stack
+        cards:
+          - type: grid
+            title: Controles rápidos
+            columns: 2
+            square: false
+            cards:
+              - type: tile
+                entity: >-
+                  switch.climatizacion_y_luces_midea_m_theri_ultimate_calefaccion_refrigeracion_zona_1
+                name: Clima zona 1
+                icon: mdi:radiator
+              - type: tile
+                entity: >-
+                  switch.climatizacion_y_luces_midea_m_theri_ultimate_acs_activada
+                name: ACS
+                icon: mdi:water-boiler
+              - type: tile
+                entity: switch.climatizacion_y_luces_midea_m_theri_ultimate_acs_rapida
+                name: ACS rápida
+                icon: mdi:rocket-launch
+              - type: tile
+                entity: switch.climatizacion_y_luces_midea_m_theri_ultimate_modo_eco
+                name: ECO
+                icon: mdi:leaf
+              - type: tile
+                entity: >-
+                  switch.climatizacion_y_luces_midea_m_theri_ultimate_modo_silencioso
+                name: Silencioso
+                icon: mdi:volume-off
+              - type: tile
+                entity: >-
+                  switch.climatizacion_y_luces_midea_m_theri_ultimate_curva_climatica_zona_1
+                name: Curva climática
+                icon: mdi:chart-bell-curve
+                vertical: false
+                features_position: bottom
+          - type: entities
+            title: Consignas
+            show_header_toggle: false
+            entities:
+              - entity: >-
+                  select.climatizacion_y_luces_midea_m_theri_ultimate_modo_de_trabajo
+                name: Modo de trabajo
+              - entity: >-
+                  number.climatizacion_y_luces_midea_m_theri_ultimate_consigna_acs
+                name: Consigna ACS
+              - entity: >-
+                  number.climatizacion_y_luces_midea_m_theri_ultimate_consigna_agua_calefaccion_zona_1
+                name: Consigna calefacción agua
+              - entity: >-
+                  number.climatizacion_y_luces_midea_m_theri_ultimate_consigna_agua_refrigeracion_zona_1
+                name: Consigna refrigeración agua
+              - entity: >-
+                  number.climatizacion_y_luces_midea_m_theri_ultimate_nivel_modo_silencioso
+                name: Nivel silencioso
+      - type: vertical-stack
+        cards:
+          - type: grid
+            title: Energía y rendimiento
+            columns: 2
+            square: false
+            cards:
+              - type: gauge
+                entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_cop_instantaneo
+                name: COP instantáneo
+                min: 0
+                max: 7
+                needle: true
+              - type: gauge
+                entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_potencia_electrica_instantanea
+                name: Potencia eléctrica
+                min: 0
+                max: 6000
+                needle: true
+              - type: tile
+                entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_potencia_termica_calculada
+                name: Potencia térmica calculada
+                icon: mdi:fire
+              - type: tile
+                entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_potencia_termica_modulo_hidraulico
+                name: Potencia térmica módulo
+                icon: mdi:heat-wave
+              - type: tile
+                entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_energia_electrica_consumida
+                name: Energía consumida
+                icon: mdi:lightning-bolt
+              - type: tile
+                entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_energia_termica_producida
+                name: Energía térmica
+                icon: mdi:radiator
+          - type: history-graph
+            title: Últimas 24 h
+            hours_to_show: 24
+            entities:
+              - entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_temperatura_impulsion_agua
+                name: Impulsión
+              - entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_temperatura_retorno_agua
+                name: Retorno
+              - entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_temperatura_deposito_acs
+                name: ACS
+              - entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_cop_instantaneo
+                name: COP
+      - type: vertical-stack
+        cards:
+          - type: grid
+            title: Hidráulica y compresor
+            columns: 2
+            square: false
+            cards:
+              - type: tile
+                entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_caudal_de_agua
+                name: Caudal
+                icon: mdi:waves
+              - type: tile
+                entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_presion_circuito_calefaccion
+                name: Presión circuito
+                icon: mdi:gauge
+              - type: tile
+                entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_frecuencia_compresor
+                name: Frecuencia compresor
+                icon: mdi:sine-wave
+              - type: tile
+                entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_frecuencia_objetivo_compresor
+                name: Frecuencia objetivo
+                icon: mdi:target
+              - type: tile
+                entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_velocidad_ventilador_exterior
+                name: Ventilador exterior
+                icon: mdi:fan
+              - type: tile
+                entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_horas_compresor
+                name: Horas compresor
+                icon: mdi:timer-outline
+          - type: entities
+            title: Estados internos
+            show_header_toggle: false
+            entities:
+              - entity: >-
+                  binary_sensor.climatizacion_y_luces_midea_m_theri_ultimate_bomba_interna_funcionando
+                name: Bomba interna
+              - entity: >-
+                  binary_sensor.climatizacion_y_luces_midea_m_theri_ultimate_bomba_exterior_funcionando
+                name: Bomba exterior
+              - entity: >-
+                  binary_sensor.climatizacion_y_luces_midea_m_theri_ultimate_valvula_acs_activa
+                name: Válvula ACS
+              - entity: >-
+                  binary_sensor.climatizacion_y_luces_midea_m_theri_ultimate_desescarche_activo
+                name: Desescarche
+              - entity: >-
+                  binary_sensor.climatizacion_y_luces_midea_m_theri_ultimate_acs_rapida_activa
+                name: ACS rápida activa
+              - entity: >-
+                  binary_sensor.climatizacion_y_luces_midea_m_theri_ultimate_curva_climatica_activa
+                name: Curva climática activa
+  - title: Diagnóstico
+    path: diagnostico
+    icon: mdi:tools
+    type: masonry
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: entities
+            title: Diagnóstico avanzado
+            show_header_toggle: false
+            entities:
+              - entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_presion_alta_refrigerante
+                name: Presión alta refrigerante
+              - entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_presion_baja_refrigerante
+                name: Presión baja refrigerante
+              - entity: >-
+                  binary_sensor.climatizacion_y_luces_midea_m_theri_ultimate_presion_calefaccion_baja
+                name: Presión calefacción baja
+              - entity: >-
+                  binary_sensor.climatizacion_y_luces_midea_m_theri_ultimate_presion_calefaccion_alta
+                name: Presión calefacción alta
+              - entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_apertura_valvula_electronica_pmv
+                name: Apertura PMV
+              - entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_intensidad_unidad_exterior
+                name: Intensidad exterior
+              - entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_tension_unidad_exterior
+                name: Tensión exterior
+              - entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_corriente_bus_dc
+                name: Corriente bus DC
+              - entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_tension_bus_dc
+                name: Tensión bus DC
+              - entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_temperatura_modulo_inverter
+                name: Temperatura inverter
+          - type: entities
+            title: Registros RAW
+            show_header_toggle: false
+            entities:
+              - entity: >-
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_diagnostico_r148_hex
+                name: Diagnóstico R148 HEX
+          - type: button
+            entity: >-
+              button.climatizacion_y_luces_midea_m_theri_ultimate_reiniciar_esp_aerotermia
+            name: Reiniciar ESP aerotermia
+            icon: mdi:restart
+            tap_action:
+              action: call-service
+              service: button.press
+              target:
+                entity_id: >-
+                  button.climatizacion_y_luces_midea_m_theri_ultimate_reiniciar_esp_aerotermia

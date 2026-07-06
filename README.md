@@ -266,3 +266,29 @@ Características:
 ### Diagnóstico
 
 ![Diagnóstico](docs/images/dashboard_diagnostico.png)
+
+
+---
+
+## Estructura del repositorio desde v1.2
+
+```text
+MIDEA-M-THERI/
+├── esphome/        # Configuración ESPHome lista para copiar a /config/esphome
+├── dashboards/     # Dashboards Lovelace
+├── docs/           # Documentación técnica conservada
+├── images/         # Imágenes, capturas y cableado
+├── tools/          # Futuras herramientas Modbus
+├── examples/       # Ejemplos de automatizaciones y uso
+└── scripts/        # Scripts auxiliares
+```
+
+### Instalación rápida ESPHome
+
+Copia el contenido de `esphome/` dentro de tu carpeta de ESPHome. El archivo principal es:
+
+```text
+esphome/aerotermia.yaml
+```
+
+La carpeta `esphome/midea/` debe quedar junto a `aerotermia.yaml`.

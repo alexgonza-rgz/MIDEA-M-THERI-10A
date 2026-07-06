@@ -1,0 +1,31 @@
+substitutions:
+  devicename: aerotermia
+  description: "Midea M-Theri Ultimate"
+
+packages:
+  # Core
+  base: !include midea/core/00_base.yaml
+  modbus: !include midea/core/10_modbus.yaml
+
+  # Control
+  controls: !include midea/control/controls.yaml
+  switches: !include midea/control/switches.yaml
+
+  # Sensors
+  temperatures: !include midea/sensors/temperatures.yaml
+  hydraulic: !include midea/sensors/hydraulic.yaml
+  compressor: !include midea/sensors/compressor.yaml
+  energy: !include midea/sensors/energy.yaml
+  extra_diagnostics: !include midea/sensors/extra_diagnostics.yaml
+
+  # States
+  binary_sensors: !include midea/states/binary_sensors.yaml
+  text_sensors: !include midea/states/text_sensors.yaml
+
+  # Calculated sensors
+  pressure: !include midea/calculated/pressure.yaml
+  cop: !include midea/calculated/cop.yaml
+  climate_curve: !include midea/calculated/climate_curve.yaml
+
+  # Engineering / RAW
+  raw_registers: !include midea/engineering/raw_registers.yaml
