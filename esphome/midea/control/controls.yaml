@@ -96,8 +96,8 @@ number:
     unit_of_measurement: "°C"
     device_class: temperature
     entity_category: config
-    min_value: 25
-    max_value: 60
+    min_value: 35
+    max_value: 65
     step: 1
     mode: slider
     lambda: |-
@@ -151,7 +151,10 @@ number:
       }
 
       uint8_t refrigeracion = uint8_t(x);
-      value = (value & 0x00FF) | (uint16_t(refrigeracion) << 8);
+
+      // En algunas Midea, la consigna activa de agua se escribe en el byte bajo
+      // y el modo actual decide si se aplica a calefacción o refrigeración.
+      value = (value & 0xFF00) | refrigeracion;
 
       id(reg_2_consigna_agua) = value;
 
