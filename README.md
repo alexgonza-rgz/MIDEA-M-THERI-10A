@@ -180,10 +180,7 @@ MIDEA-M-THERI/
 ├── images/
 │
 ├── examples/
-│
-├── scripts/
-│
-└── tools/
+
 ```
 
 ---
@@ -196,9 +193,6 @@ Actualmente disponibles:
 
 - 🏠 Control
 - 📈 Diagnóstico
-
-Próximamente:
-
 - 🔧 Ingeniería
 - ⚙️ Servicio
 
@@ -229,7 +223,7 @@ Actualmente validado con:
 
 | Equipo | Estado |
 |---------|:------:|
-| Midea M-Theri 10 A  | ✅ |
+| Midea M-Thermal 10 A  | ✅ |
 | ESP32 | ✅ |
 | ESPHome | ✅ |
 | Home Assistant | ✅ |
@@ -262,7 +256,6 @@ Otros modelos deberán validarse.
 ## ⏳ v1.5
 
 - Fan Coils Midea
-- Soporte para doble zona
 
 ## 🎯 v2.0
 
