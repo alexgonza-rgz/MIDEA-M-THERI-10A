@@ -102,39 +102,64 @@ number:
     max_value: 65
     step: 1
     mode: slider
+
     lambda: |-
       id(reg_2_consigna_agua) = uint16_t(x);
       return uint16_t(x) & 0x00FF;
+
     write_lambda: |-
       uint16_t value = id(reg_2_consigna_agua);
 
       if (value == 0) {
-        ESP_LOGW("midea", "Registro 0x02 aún no leído, no escribo consigna agua zona 1");
+        ESP_LOGW(
+          "midea",
+          "Registro 0x02 aún no leído; no se escribe la consigna de agua"
+        );
         return {};
       }
 
       uint8_t consigna = uint8_t(x);
-      std::string modo = id(${devicename}_modo_trabajo).state;
+      auto modo = id(${devicename}_modo_trabajo).current_option();
 
+      // Refrigeración: 5-25 °C
       if (modo == "Frío") {
-        if (consigna < 5) consigna = 5;
-        if (consigna > 25) consigna = 25;
+        if (consigna < 5) {
+          consigna = 5;
+        } else if (consigna > 25) {
+          consigna = 25;
+        }
       }
 
-      if (modo == "Calor") {
-        if (consigna < 35) consigna = 35;
-        if (consigna > 65) consigna = 65;
+      // Calefacción: 35-65 °C
+      else if (modo == "Calor") {
+        if (consigna < 35) {
+          consigna = 35;
+        } else if (consigna > 65) {
+          consigna = 65;
+        }
       }
 
+      // Byte bajo del registro 0x02 = consigna activa de agua.
       value = (value & 0xFF00) | consigna;
       id(reg_2_consigna_agua) = value;
 
-      auto cmd =
-        esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
-          ${devicename}, 0x2, value
-        );
-      ${devicename}->queue_command(cmd);
+      ESP_LOGI(
+        "midea",
+        "Escribiendo consigna zona 1: %u °C, modo: %.*s",
+        consigna,
+        int(modo.size()),
+        modo.c_str()
+      );
 
+      auto cmd =
+        esphome::modbus_controller::ModbusCommandItem::
+          create_write_single_command(
+            ${devicename},
+            0x02,
+            value
+          );
+
+      ${devicename}->queue_command(cmd);
       return {};
   - platform: modbus_controller
     modbus_controller_id: "${devicename}"
