@@ -11,7 +11,7 @@
 
 switch:
   - platform: template
-    name: "Calefacción/refrigeración zona 1"
+    name: "Calefacción y refrigeración zona 1"
     id: "${devicename}_activar_clima_zona_1"
     icon: mdi:home-thermometer
     entity_category: config
