@@ -40,9 +40,11 @@ views:
             cards:
               - type: tile
                 entity: >-
-                  switch.climatizacion_y_luces_midea_m_theri_ultimate_calefaccion_refrigeracion_zona_1
+                  switch.climatizacion_y_luces_midea_m_theri_ultimate_calefaccion_y_refrigeracion_zona_1
                 name: Clima zona 1
                 icon: mdi:radiator
+                vertical: false
+                features_position: bottom
               - type: tile
                 entity: >-
                   switch.climatizacion_y_luces_midea_m_theri_ultimate_acs_activada
