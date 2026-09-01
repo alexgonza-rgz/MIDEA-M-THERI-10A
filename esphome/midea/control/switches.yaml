@@ -3,73 +3,155 @@
 # ==================================================
 # Interruptores de funciones.
 #
-# Actualizado con registros del heatpump.yaml:
-# - Modo silencioso: registro 0x05 bit 6 -> 0x40
-# - Nivel silencioso: registro 0x05 bit 7 -> 0x80
+# Protección de arranque:
+# - No se publica un estado falso antes de leer Modbus.
+# - No se permiten escrituras sobre registros compartidos sin lectura previa.
+# - turn_on_action/turn_off_action solo escriben cuando se recibe una orden.
+#
+# Registros:
+# - Zona 1: registro 0x00 bit 1 -> 0x0002
+# - ACS: registro 0x00 bit 2 -> 0x0004
+# - Modo silencioso: registro 0x05 bit 6 -> 0x0040
+# - Nivel silencioso: registro 0x05 bit 7 -> 0x0080
+# - Modo ECO: registro 0x05 bit 10 -> 0x0400
 # - Curva climática zona 1: registro 0x05 bit 12 -> 0x1000
-# - ACS rápida / forzar calentamiento ACS: registro 0x07, escribe 1 ON y 2 OFF
+# - ACS rápida: registro 0x07, escribe 1 ON y 2 OFF
 
 switch:
+  # ==================================================
+  # CALEFACCIÓN / REFRIGERACIÓN ZONA 1
+  # ==================================================
   - platform: template
     name: "Calefacción y refrigeración zona 1"
     id: "${devicename}_activar_clima_zona_1"
     icon: mdi:home-thermometer
     entity_category: config
     restore_mode: DISABLED
-    optimistic: true
+    optimistic: false
+
     lambda: |-
-      return (id(reg_0_potencias) & 0x2) == 0x2;
-    on_turn_on:
+      if (!id(${devicename}_registro_potencias_interno).has_state()) {
+        return {};
+      }
+
+      return (id(reg_0_potencias) & 0x0002) == 0x0002;
+
+    turn_on_action:
       - lambda: |-
-          uint16_t new_value = id(reg_0_potencias) | 0x2;
-          id(reg_0_potencias) = new_value;
-          auto cmd =
-            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
-              ${devicename}, 0x0, new_value
+          if (!id(${devicename}_registro_potencias_interno).has_state()) {
+            ESP_LOGW(
+              "midea",
+              "Registro 0x00 aún no leído; se ignora encender zona 1"
             );
-          ${devicename}->queue_command(cmd);
-    on_turn_off:
-      - lambda: |-
-          uint16_t new_value = id(reg_0_potencias) & ~0x2;
+            return;
+          }
+
+          uint16_t new_value = id(reg_0_potencias) | 0x0002;
           id(reg_0_potencias) = new_value;
+
           auto cmd =
-            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
-              ${devicename}, 0x0, new_value
-            );
+            esphome::modbus_controller::ModbusCommandItem::
+              create_write_single_command(
+                ${devicename},
+                0x00,
+                new_value
+              );
+
           ${devicename}->queue_command(cmd);
 
+    turn_off_action:
+      - lambda: |-
+          if (!id(${devicename}_registro_potencias_interno).has_state()) {
+            ESP_LOGW(
+              "midea",
+              "Registro 0x00 aún no leído; se ignora apagar zona 1"
+            );
+            return;
+          }
+
+          uint16_t new_value = id(reg_0_potencias) & ~0x0002;
+          id(reg_0_potencias) = new_value;
+
+          auto cmd =
+            esphome::modbus_controller::ModbusCommandItem::
+              create_write_single_command(
+                ${devicename},
+                0x00,
+                new_value
+              );
+
+          ${devicename}->queue_command(cmd);
+
+  # ==================================================
+  # ACS ACTIVADA
+  # ==================================================
   - platform: template
     name: "ACS activada"
     id: "${devicename}_activar_acs"
     icon: mdi:water-boiler
     entity_category: config
     restore_mode: DISABLED
-    optimistic: true
+    optimistic: false
+
     lambda: |-
-      return (id(reg_0_potencias) & 0x4) == 0x4;
-    on_turn_on:
+      if (!id(${devicename}_registro_potencias_interno).has_state()) {
+        return {};
+      }
+
+      return (id(reg_0_potencias) & 0x0004) == 0x0004;
+
+    turn_on_action:
       - lambda: |-
-          uint16_t new_value = id(reg_0_potencias) | 0x4;
-          id(reg_0_potencias) = new_value;
-          auto cmd =
-            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
-              ${devicename}, 0x0, new_value
+          if (!id(${devicename}_registro_potencias_interno).has_state()) {
+            ESP_LOGW(
+              "midea",
+              "Registro 0x00 aún no leído; se ignora activar ACS"
             );
-          ${devicename}->queue_command(cmd);
-    on_turn_off:
-      - lambda: |-
-          uint16_t new_value = id(reg_0_potencias) & ~0x4;
+            return;
+          }
+
+          uint16_t new_value = id(reg_0_potencias) | 0x0004;
           id(reg_0_potencias) = new_value;
+
           auto cmd =
-            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
-              ${devicename}, 0x0, new_value
-            );
+            esphome::modbus_controller::ModbusCommandItem::
+              create_write_single_command(
+                ${devicename},
+                0x00,
+                new_value
+              );
+
           ${devicename}->queue_command(cmd);
 
-  # ACS rápida / forzar calentamiento del depósito.
+    turn_off_action:
+      - lambda: |-
+          if (!id(${devicename}_registro_potencias_interno).has_state()) {
+            ESP_LOGW(
+              "midea",
+              "Registro 0x00 aún no leído; se ignora desactivar ACS"
+            );
+            return;
+          }
+
+          uint16_t new_value = id(reg_0_potencias) & ~0x0004;
+          id(reg_0_potencias) = new_value;
+
+          auto cmd =
+            esphome::modbus_controller::ModbusCommandItem::
+              create_write_single_command(
+                ${devicename},
+                0x00,
+                new_value
+              );
+
+          ${devicename}->queue_command(cmd);
+
+  # ==================================================
+  # ACS RÁPIDA
   # Registro 0x07:
-  #   1 = ON
-  #   2 = OFF
+  # 1 = activar
+  # 2 = desactivar
+  # ==================================================
   - platform: template
     name: "ACS rápida"
     id: "${devicename}_acs_rapida"
@@ -77,135 +159,287 @@ switch:
     entity_category: config
     restore_mode: DISABLED
     optimistic: true
+
     turn_on_action:
       - lambda: |-
           auto cmd =
-            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
-              ${devicename}, 0x7, 1
-            );
+            esphome::modbus_controller::ModbusCommandItem::
+              create_write_single_command(
+                ${devicename},
+                0x07,
+                1
+              );
+
           ${devicename}->queue_command(cmd);
+
     turn_off_action:
       - lambda: |-
           auto cmd =
-            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
-              ${devicename}, 0x7, 2
-            );
+            esphome::modbus_controller::ModbusCommandItem::
+              create_write_single_command(
+                ${devicename},
+                0x07,
+                2
+              );
+
           ${devicename}->queue_command(cmd);
 
-  # Curva climática zona 1.
-  # Antes estaba en registro 0x00 bit 0x08, pero el YAML de referencia
-  # confirma que es registro 0x05 bit 12.
+  # ==================================================
+  # CURVA CLIMÁTICA ZONA 1
+  # Registro 0x05 bit 12
+  # ==================================================
   - platform: template
     name: "Curva climática zona 1"
     id: "${devicename}_curva_climatica_zona_1"
     icon: mdi:chart-bell-curve
     entity_category: config
     restore_mode: DISABLED
-    optimistic: true
+    optimistic: false
+
     lambda: |-
+      if (!id(${devicename}_registro_funciones_interno).has_state()) {
+        return {};
+      }
+
       return (id(reg_5_funciones) & 0x1000) == 0x1000;
-    on_turn_on:
+
+    turn_on_action:
       - lambda: |-
+          if (!id(${devicename}_registro_funciones_interno).has_state()) {
+            ESP_LOGW(
+              "midea",
+              "Registro 0x05 aún no leído; se ignora activar curva climática"
+            );
+            return;
+          }
+
           uint16_t new_value = id(reg_5_funciones) | 0x1000;
           id(reg_5_funciones) = new_value;
+
           auto cmd =
-            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
-              ${devicename}, 0x5, new_value
-            );
-          ${devicename}->queue_command(cmd);
-    on_turn_off:
-      - lambda: |-
-          uint16_t new_value = id(reg_5_funciones) & ~0x1000;
-          id(reg_5_funciones) = new_value;
-          auto cmd =
-            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
-              ${devicename}, 0x5, new_value
-            );
+            esphome::modbus_controller::ModbusCommandItem::
+              create_write_single_command(
+                ${devicename},
+                0x05,
+                new_value
+              );
+
           ${devicename}->queue_command(cmd);
 
+    turn_off_action:
+      - lambda: |-
+          if (!id(${devicename}_registro_funciones_interno).has_state()) {
+            ESP_LOGW(
+              "midea",
+              "Registro 0x05 aún no leído; se ignora desactivar curva climática"
+            );
+            return;
+          }
+
+          uint16_t new_value = id(reg_5_funciones) & ~0x1000;
+          id(reg_5_funciones) = new_value;
+
+          auto cmd =
+            esphome::modbus_controller::ModbusCommandItem::
+              create_write_single_command(
+                ${devicename},
+                0x05,
+                new_value
+              );
+
+          ${devicename}->queue_command(cmd);
+
+  # ==================================================
+  # MODO SILENCIOSO
+  # Registro 0x05 bit 6
+  # ==================================================
   - platform: template
     name: "Modo silencioso"
     id: "${devicename}_modo_silencioso"
     icon: mdi:volume-off
     entity_category: config
     restore_mode: DISABLED
-    optimistic: true
+    optimistic: false
+
     lambda: |-
-      return (id(reg_5_funciones) & 0x40) == 0x40;
-    on_turn_on:
+      if (!id(${devicename}_registro_funciones_interno).has_state()) {
+        return {};
+      }
+
+      return (id(reg_5_funciones) & 0x0040) == 0x0040;
+
+    turn_on_action:
       - lambda: |-
-          uint16_t new_value = id(reg_5_funciones) | 0x40;
-          id(reg_5_funciones) = new_value;
-          auto cmd =
-            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
-              ${devicename}, 0x5, new_value
+          if (!id(${devicename}_registro_funciones_interno).has_state()) {
+            ESP_LOGW(
+              "midea",
+              "Registro 0x05 aún no leído; se ignora activar modo silencioso"
             );
-          ${devicename}->queue_command(cmd);
-    on_turn_off:
-      - lambda: |-
-          uint16_t new_value = id(reg_5_funciones) & ~0x40;
+            return;
+          }
+
+          uint16_t new_value = id(reg_5_funciones) | 0x0040;
           id(reg_5_funciones) = new_value;
+
           auto cmd =
-            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
-              ${devicename}, 0x5, new_value
-            );
+            esphome::modbus_controller::ModbusCommandItem::
+              create_write_single_command(
+                ${devicename},
+                0x05,
+                new_value
+              );
+
           ${devicename}->queue_command(cmd);
 
-  # Nivel de modo silencioso.
-  # El mapa lo marca como registro 0x05 bit 7.
-  # Es binario: nivel normal/bajo o nivel alto, según cómo lo muestre la máquina.
+    turn_off_action:
+      - lambda: |-
+          if (!id(${devicename}_registro_funciones_interno).has_state()) {
+            ESP_LOGW(
+              "midea",
+              "Registro 0x05 aún no leído; se ignora desactivar modo silencioso"
+            );
+            return;
+          }
+
+          uint16_t new_value = id(reg_5_funciones) & ~0x0040;
+          id(reg_5_funciones) = new_value;
+
+          auto cmd =
+            esphome::modbus_controller::ModbusCommandItem::
+              create_write_single_command(
+                ${devicename},
+                0x05,
+                new_value
+              );
+
+          ${devicename}->queue_command(cmd);
+
+  # ==================================================
+  # NIVEL MODO SILENCIOSO ALTO
+  # Registro 0x05 bit 7
+  # ==================================================
   - platform: template
     name: "Nivel modo silencioso alto"
     id: "${devicename}_nivel_modo_silencioso_alto"
     icon: mdi:volume-low
     entity_category: config
     restore_mode: DISABLED
-    optimistic: true
+    optimistic: false
+
     lambda: |-
-      return (id(reg_5_funciones) & 0x80) == 0x80;
-    on_turn_on:
+      if (!id(${devicename}_registro_funciones_interno).has_state()) {
+        return {};
+      }
+
+      return (id(reg_5_funciones) & 0x0080) == 0x0080;
+
+    turn_on_action:
       - lambda: |-
-          uint16_t new_value = id(reg_5_funciones) | 0x80;
-          id(reg_5_funciones) = new_value;
-          auto cmd =
-            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
-              ${devicename}, 0x5, new_value
+          if (!id(${devicename}_registro_funciones_interno).has_state()) {
+            ESP_LOGW(
+              "midea",
+              "Registro 0x05 aún no leído; se ignora activar nivel silencioso alto"
             );
-          ${devicename}->queue_command(cmd);
-    on_turn_off:
-      - lambda: |-
-          uint16_t new_value = id(reg_5_funciones) & ~0x80;
+            return;
+          }
+
+          uint16_t new_value = id(reg_5_funciones) | 0x0080;
           id(reg_5_funciones) = new_value;
+
           auto cmd =
-            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
-              ${devicename}, 0x5, new_value
-            );
+            esphome::modbus_controller::ModbusCommandItem::
+              create_write_single_command(
+                ${devicename},
+                0x05,
+                new_value
+              );
+
           ${devicename}->queue_command(cmd);
 
+    turn_off_action:
+      - lambda: |-
+          if (!id(${devicename}_registro_funciones_interno).has_state()) {
+            ESP_LOGW(
+              "midea",
+              "Registro 0x05 aún no leído; se ignora desactivar nivel silencioso alto"
+            );
+            return;
+          }
+
+          uint16_t new_value = id(reg_5_funciones) & ~0x0080;
+          id(reg_5_funciones) = new_value;
+
+          auto cmd =
+            esphome::modbus_controller::ModbusCommandItem::
+              create_write_single_command(
+                ${devicename},
+                0x05,
+                new_value
+              );
+
+          ${devicename}->queue_command(cmd);
+
+  # ==================================================
+  # MODO ECO
+  # Registro 0x05 bit 10
+  # ==================================================
   - platform: template
     name: "Modo ECO"
     id: "${devicename}_modo_eco"
     icon: mdi:leaf
     entity_category: config
     restore_mode: DISABLED
-    optimistic: true
+    optimistic: false
+
     lambda: |-
-      return (id(reg_5_funciones) & 0x400) == 0x400;
-    on_turn_on:
+      if (!id(${devicename}_registro_funciones_interno).has_state()) {
+        return {};
+      }
+
+      return (id(reg_5_funciones) & 0x0400) == 0x0400;
+
+    turn_on_action:
       - lambda: |-
-          uint16_t new_value = id(reg_5_funciones) | 0x400;
-          id(reg_5_funciones) = new_value;
-          auto cmd =
-            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
-              ${devicename}, 0x5, new_value
+          if (!id(${devicename}_registro_funciones_interno).has_state()) {
+            ESP_LOGW(
+              "midea",
+              "Registro 0x05 aún no leído; se ignora activar modo ECO"
             );
+            return;
+          }
+
+          uint16_t new_value = id(reg_5_funciones) | 0x0400;
+          id(reg_5_funciones) = new_value;
+
+          auto cmd =
+            esphome::modbus_controller::ModbusCommandItem::
+              create_write_single_command(
+                ${devicename},
+                0x05,
+                new_value
+              );
+
           ${devicename}->queue_command(cmd);
-    on_turn_off:
+
+    turn_off_action:
       - lambda: |-
-          uint16_t new_value = id(reg_5_funciones) & ~0x400;
-          id(reg_5_funciones) = new_value;
-          auto cmd =
-            esphome::modbus_controller::ModbusCommandItem::create_write_single_command(
-              ${devicename}, 0x5, new_value
+          if (!id(${devicename}_registro_funciones_interno).has_state()) {
+            ESP_LOGW(
+              "midea",
+              "Registro 0x05 aún no leído; se ignora desactivar modo ECO"
             );
+            return;
+          }
+
+          uint16_t new_value = id(reg_5_funciones) & ~0x0400;
+          id(reg_5_funciones) = new_value;
+
+          auto cmd =
+            esphome::modbus_controller::ModbusCommandItem::
+              create_write_single_command(
+                ${devicename},
+                0x05,
+                new_value
+              );
+
           ${devicename}->queue_command(cmd);
