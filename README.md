@@ -20,29 +20,29 @@ La configuraciÃ³n incluida es la que estÃ¡ instalada y funcionando en la uni
 
 ### Control
 
-- Modo Auto, FrÃ­o y Calor.
-- ActivaciÃ³n independiente de climatizaciÃ³n de zona 1 y ACS.
+- Modo Auto, Frío y Calor.
+- Activación independiente de climatización de zona 1 y ACS.
 - Consigna activa de agua de zona 1.
 - Consigna ambiente y consigna de ACS.
-- Curva climÃ¡tica de zona 1.
+- Curva climática de zona 1.
 - Modo ECO y modo silencioso.
-- ACS rÃ¡pida.
-- SelecciÃ³n del tipo de emisor de zona 1.
+- ACS rápida.
+- Selección del tipo de emisor de zona 1.
 
 ### MonitorizaciÃ³n
 
-- Temperaturas de impulsiÃ³n, retorno, exterior y depÃ³sito de ACS.
-- Caudal y presiÃ³n del circuito de calefacciÃ³n.
+- Temperaturas de impulsión, retorno, exterior y depósito de ACS.
+- Caudal y presión del circuito de calefacción.
 - Frecuencia del compresor y velocidad del ventilador exterior.
 - Presiones y temperaturas del circuito frigorÃ­fico.
-- Estados de bomba, vÃ¡lvula de ACS, resistencias, desescarche y alarma.
-- EnergÃ­a consumida y producida.
-- Potencia tÃ©rmica calculada, COP instantÃ¡neo y COP acumulado.
-- Registros RAW para diagnÃ³stico.
+- Estados de bomba, válvula de ACS, resistencias, desescarche y alarma.
+- Energí­a consumida y producida.
+- Potencia tÃ©rmica calculada, COP instantáneo y COP acumulado.
+- Registros RAW para diagnóstico.
 
 ## Estado de validaciÃ³n
 
-| Ãrea | Estado | Observaciones |
+| Área | Estado | Observaciones |
 |---|---|---|
 | ComunicaciÃ³n Modbus | En uso | 9600 8N1, esclavo 1, actualizaciÃ³n cada 10 s |
 | Lecturas principales | En uso | Temperaturas, caudal, compresor, estados y ACS |
@@ -65,20 +65,20 @@ La configuraciÃ³n incluida es la que estÃ¡ instalada y funcionando en la uni
 
 ### Sensor de presiÃ³n instalado
 
-- AlimentaciÃ³n a 5 V.
+- Alimentación a 5 V.
 - Cable rojo: +5 V.
 - Cable negro: GND comÃºn con el ESP32.
-- Cable verde: seÃ±al analÃ³gica.
-- Divisor: 10 kÎ© en serie y 20 kÎ© a GND.
+- Cable verde: seÃ±al analógica.
+- Divisor: 10 k ohms en serie y 20 k ohms a GND.
 - Entrada ADC: GPIO34.
 
-El sensor de presiÃ³n es opcional. La calibraciÃ³n incluida corresponde a la instalaciÃ³n original y debe ajustarse si cambia el sensor, el divisor o el ESP32.
+El sensor de presión es opcional. La calibración incluida corresponde a la instalación original y debe ajustarse si cambia el sensor, el divisor o el ESP32.
 
 Consulta [Cableado](docs/wiring.md) para ver el conexionado completo.
 
 ## ComunicaciÃ³n RS485
 
-| ParÃ¡metro | Valor |
+| Parámetro | Valor |
 |---|---|
 | Protocolo | Modbus RTU |
 | Velocidad | 9600 bit/s |
