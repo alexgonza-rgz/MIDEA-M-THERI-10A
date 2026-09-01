@@ -96,23 +96,23 @@ Consulta [Cableado](docs/wiring.md) para ver el conexionado completo.
 
 ```text
 MIDEA-M-THERI-10A/
-â”œâ”€â”€ esphome/
-â”‚   â”œâ”€â”€ aerotermia.yaml
-â”‚   â””â”€â”€ midea/
-â”‚       â”œâ”€â”€ core/
-â”‚       â”œâ”€â”€ control/
-â”‚       â”œâ”€â”€ sensors/
-â”‚       â”œâ”€â”€ states/
-â”‚       â”œâ”€â”€ calculated/
-â”‚       â””â”€â”€ engineering/
-â”œâ”€â”€ dashboards/
-â”‚   â”œâ”€â”€ dashboard_principal_V1.2.yaml
-â”‚   â””â”€â”€ dashboard_v1.3.yaml
-â”œâ”€â”€ docs/
-â”œâ”€â”€ examples/
-â”œâ”€â”€ ROADMAP.md
-â”œâ”€â”€ TODO.md
-â””â”€â”€ VERIFY.md
+ esphome/
+ aerotermia.yaml
+ midea/
+ core/
+ control/
+ sensors/
+ states/
+ calculated/
+ engineering/
+ dashboards/
+ dashboard_principal_V1.2.yaml
+ dashboard_v1.3.yaml
+ docs/
+ examples/
+ ROADMAP.md
+ TODO.md
+ VERIFY.md
 ```
 
 `aerotermia.yaml` carga el resto de los archivos como paquetes. No es necesario unirlos en un Ãºnico YAML.
