@@ -2,7 +2,7 @@
 # 00_BASE
 # ==================================================
 # Base ESPHome para Midea M-Theri.
-# Aquí solo va la configuración general del ESP32.
+# Configuración general y diagnóstico del ESP32.
 
 globals:
   - id: reg_0_potencias
@@ -29,9 +29,10 @@ esphome:
   name: "${devicename}"
   comment: "${description}"
   friendly_name: "${description}"
+
   project:
     name: "alex.midea_mtheri_integracion"
-    version: "2.0.0"
+    version: "2.0.1"
 
 esp32:
   board: esp32dev
@@ -41,6 +42,10 @@ esp32:
 logger:
   level: INFO
   baud_rate: 0
+
+# Proporciona el motivo del reinicio y datos internos.
+debug:
+  update_interval: 30s
 
 api:
 
@@ -55,11 +60,72 @@ wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
   power_save_mode: none
+
   ap:
     ssid: "Aerotermia-Setup"
     password: "heatpump"
 
 captive_portal:
+
+# ==================================================
+# ESTADO DE CONEXIÓN
+# ==================================================
+binary_sensor:
+  - platform: status
+    name: "ESP conectado"
+    id: "${devicename}_esp_conectado"
+    entity_category: diagnostic
+
+# ==================================================
+# DIAGNÓSTICO
+# ==================================================
+sensor:
+  # Segundos desde el último arranque.
+  - platform: uptime
+    name: "ESP tiempo activo"
+    id: "${devicename}_esp_tiempo_activo"
+    type: seconds
+    update_interval: 10s
+    entity_category: diagnostic
+
+  # Intensidad de la conexión Wi-Fi en dBm.
+  - platform: wifi_signal
+    name: "ESP señal WiFi"
+    id: "${devicename}_esp_senal_wifi"
+    update_interval: 30s
+    entity_category: diagnostic
+
+  # Diagnóstico de memoria y funcionamiento.
+  - platform: debug
+    free:
+      name: "ESP memoria libre"
+      id: "${devicename}_esp_memoria_libre"
+      entity_category: diagnostic
+
+    min_free:
+      name: "ESP memoria libre mínima"
+      id: "${devicename}_esp_memoria_libre_minima"
+      entity_category: diagnostic
+
+    fragmentation:
+      name: "ESP fragmentación de memoria"
+      id: "${devicename}_esp_fragmentacion_memoria"
+      entity_category: diagnostic
+
+    loop_time:
+      name: "ESP tiempo máximo de bucle"
+      id: "${devicename}_esp_tiempo_bucle"
+      entity_category: diagnostic
+
+# ==================================================
+# MOTIVO DEL ÚLTIMO REINICIO
+# ==================================================
+text_sensor:
+  - platform: debug
+    reset_reason:
+      name: "ESP motivo del último reinicio"
+      id: "${devicename}_esp_motivo_reinicio"
+      entity_category: diagnostic
 
 button:
   - platform: restart
