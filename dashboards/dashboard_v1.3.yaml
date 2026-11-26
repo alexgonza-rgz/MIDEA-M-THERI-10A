@@ -314,6 +314,16 @@ views:
           - entity: >-
               binary_sensor.climatizacion_y_luces_midea_m_theri_ultimate_curva_climatica_activa
             name: Curva climática activa
+      - type: entities
+        title: Versiones del equipo
+        show_header_toggle: false
+        entities:
+          - entity: >-
+              sensor.climatizacion_y_luces_midea_m_theri_ultimate_version_software_equipo
+            name: Software del equipo
+          - entity: >-
+              sensor.climatizacion_y_luces_midea_m_theri_ultimate_version_mando_cableado
+            name: Mando cableado
   - title: Ingeniería
     path: ingenieria
     icon: mdi:chip

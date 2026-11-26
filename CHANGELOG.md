@@ -2,6 +2,7 @@
 
 ## 27/11/2026
 
+- `extra_diagnostics.yaml`: sensores de solo lectura «Versión software equipo» (registro 0x82) y «Versión mando cableado» (0x83), y tarjeta «Versiones del equipo» en la pestaña Diagnóstico del dashboard. Pendiente de instalar el firmware y de comprobar qué valor devuelve el equipo.
 - `calculated/cop.yaml`: se tiene en cuenta la resistencia de apoyo IBH1 (3 kW, medidos con el Deye el 22/11/2026). Entra cuando el compresor se para y los contadores del equipo no la cuentan, así que el COP salía 0 con la casa consumiendo unos 3 kW.
   - Sensor nuevo «Potencia resistencia apoyo estimada» (`resistencia_apoyo_kw`, 3,0 kW).
   - «Potencia eléctrica estimada» suma esa resistencia.

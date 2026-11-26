@@ -172,3 +172,26 @@ sensor:
     device_class: temperature
     state_class: measurement
     entity_category: diagnostic
+
+  # Versiones del equipo (registros 130 y 131 del mapa de Midea). Solo lectura.
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Versión software equipo"
+    id: "${devicename}_version_software_equipo"
+    icon: mdi:chip
+    register_type: holding
+    address: 0x82
+    value_type: U_WORD
+    accuracy_decimals: 0
+    entity_category: diagnostic
+
+  - platform: modbus_controller
+    modbus_controller_id: "${devicename}"
+    name: "Versión mando cableado"
+    id: "${devicename}_version_mando_cableado"
+    icon: mdi:chip
+    register_type: holding
+    address: 0x83
+    value_type: U_WORD
+    accuracy_decimals: 0
+    entity_category: diagnostic
