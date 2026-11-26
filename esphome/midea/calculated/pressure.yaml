@@ -16,11 +16,26 @@
 # Divisor:
 # Azul sensor -> 10 kΩ -> GPIO34 -> 20 kΩ -> GND
 #
-# Calibración:
-# reloj 2.00 bar -> lectura previa 1.82 bar
-# reloj 2.65 bar -> lectura previa 2.43 bar
+# Calibración (tensión en el pin del ADC -> manómetro físico, 01/11/2026):
+# 0.41 V -> 0.00 bar
+# 1.04 V -> 0.758 bar (11 psi)
+# 1.34 V -> 1.22 bar (17.7 psi)
+# 1.60 V -> 1.60 bar
+# Ajuste resultante: bar = 1.342 x V - 0.578 (error máx. 0.06 bar)
+# Límite de seguridad: la válvula abre a 2 bar.
 
 sensor:
+  # TEMPORAL (calibración): tensión cruda del ADC antes de cualquier filtro.
+  # Se rellena desde el primer filtro del sensor de presión. Quitar al terminar.
+  - platform: template
+    name: "Presión tensión ADC cruda (temporal)"
+    id: "${devicename}_presion_tension_adc_cruda"
+    unit_of_measurement: "V"
+    device_class: voltage
+    state_class: measurement
+    accuracy_decimals: 3
+    entity_category: diagnostic
+
   - platform: adc
     pin: GPIO34
     name: "Presión circuito calefacción"
@@ -31,15 +46,26 @@ sensor:
     unit_of_measurement: "bar"
     device_class: pressure
     state_class: measurement
-    accuracy_decimals: 2  
+    accuracy_decimals: 2
     filters:
+      # TEMPORAL (calibración): copia la tensión cruda y la deja pasar sin cambios.
+      - lambda: |-
+          id(${devicename}_presion_tension_adc_cruda).publish_state(x);
+          return x;
+      # Protección: por debajo de 0.2 V el sensor está desconectado o en fallo.
+      # Se publica "sin dato" en vez de 0 bar para no dar una lectura falsa.
+      - lambda: |-
+          if (x < 0.2) return NAN;
+          return x;
+      # Media de las últimas 12 lecturas (2 min), publica cada 3 (30 s).
+      - sliding_window_moving_average:
+          window_size: 12
+          send_every: 3
       - calibrate_linear:
-          - 0.45 -> 0.0
-          - 0.95 -> 0.5
-          - 1.20 -> 1.0
-          - 1.50 -> 1.5
-          - 2.00 -> 2.0
-          - 2.32 -> 2.5
+          - 0.41 -> 0.0
+          - 1.04 -> 0.758
+          - 1.34 -> 1.22
+          - 1.60 -> 1.6
       - clamp:
           min_value: 0.0
-          max_value: 5.
+          max_value: 3.0

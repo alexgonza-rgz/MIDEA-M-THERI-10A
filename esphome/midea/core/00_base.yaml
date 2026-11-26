@@ -49,12 +49,19 @@ debug:
 
 api:
 
+# La OTA exige contraseña (secreto ota_password).
 ota:
-  platform: esphome
+  - platform: esphome
+    password: !secret ota_password
 
+# Panel web protegido: usuario admin y la misma contraseña OTA.
+# Esto también protege la subida de firmware desde el navegador.
 web_server:
   port: 80
   version: 3
+  auth:
+    username: admin
+    password: !secret ota_password
 
 wifi:
   ssid: !secret wifi_ssid
@@ -63,7 +70,7 @@ wifi:
 
   ap:
     ssid: "Aerotermia-Setup"
-    password: "heatpump"
+    password: !secret fallback_password
 
 captive_portal:
 

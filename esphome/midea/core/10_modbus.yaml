@@ -25,6 +25,8 @@ modbus:
   id: heatpump_modbus
   flow_control_pin: GPIO4
   send_wait_time: 200ms
+  # Sustituye al antiguo command_throttle del controlador (obsoleto).
+  turnaround_time: 200ms
 
 modbus_controller:
   - id: "${devicename}"
@@ -32,4 +34,3 @@ modbus_controller:
     modbus_id: heatpump_modbus
     setup_priority: -10
     update_interval: 10s
-    command_throttle: 200ms

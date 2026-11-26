@@ -1,6 +1,10 @@
 # ==================================================
 # 63_ENERGY
 # ==================================================
+# La potencia eléctrica instantánea se calcula en calculated/cop.yaml
+# (tensión x intensidad). El registro R147 (0x93) se retiró: no da valores reales.
+# La potencia térmica del módulo hidráulico (0x8C) se mantiene por petición,
+# aunque hasta ahora siempre ha leído 0.
 
 sensor:
   - platform: modbus_controller
@@ -40,21 +44,3 @@ sensor:
     unit_of_measurement: "kWh"
     device_class: energy
     state_class: total_increasing
-
-  # Candidato encontrado con sniffer: R147.
-  # Ajustar escala si no cuadra con vatímetro real.
-  - platform: modbus_controller
-    modbus_controller_id: "${devicename}"
-    name: "Potencia eléctrica instantánea"
-    id: "${devicename}_potencia_electrica_instantanea"
-    icon: mdi:flash
-    register_type: holding
-    address: 0x93
-    value_type: U_WORD
-    unit_of_measurement: "kW"
-    device_class: power
-    state_class: measurement
-    accuracy_decimals: 2
-    entity_category: diagnostic
-    filters:
-      - lambda: return x * 0.01;

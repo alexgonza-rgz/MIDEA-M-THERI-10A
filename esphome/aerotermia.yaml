@@ -29,3 +29,35 @@ packages:
 
   # Engineering / RAW
   raw_registers: !include midea/engineering/raw_registers.yaml
+
+api:
+  encryption:
+    key: !secret aerotermia__encryption_key
+
+# ==================================================
+# AJUSTES SOBRE LOS PAQUETES (se fusionan con !extend)
+# ==================================================
+
+binary_sensor:
+  # La válvula de seguridad abre a 2 bar: se avisa antes, a partir de 1,8 bar.
+  - id: !extend "${devicename}_presion_calefaccion_alta"
+    lambda: |-
+      float p = id(${devicename}_presion_circuito_calefaccion).state;
+      if (isnan(p)) return false;
+      return p > 1.8;
+
+# Datos que casi no cambian: se leen 1 de cada 6 sondeos (cada 60 s)
+# para aliviar el bus RS485 y la base de datos de Home Assistant.
+sensor:
+  - id: !extend "${devicename}_energia_electrica_consumida"
+    skip_updates: 5
+  - id: !extend "${devicename}_energia_termica_producida"
+    skip_updates: 5
+  - id: !extend "${devicename}_horas_compresor"
+    skip_updates: 5
+
+number:
+  - id: !extend "${devicename}_curva_calefaccion_z1"
+    skip_updates: 5
+  - id: !extend "${devicename}_curva_refrigeracion_z1"
+    skip_updates: 5

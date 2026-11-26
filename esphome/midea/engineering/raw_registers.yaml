@@ -1,8 +1,9 @@
 # ==================================================
 # 99_RAW_REGISTERS
 # ==================================================
-# Registros internos y diagnóstico ocultos.
-# Activa estas entidades en Home Assistant solo cuando quieras investigar.
+# Registros internos (se usan en lambdas de otros paquetes) y código de error.
+# Los antiguos "Diagnóstico R148-R155" (0x94-0x9B) se retiraron el 02/11/2026:
+# el módulo responde con excepción 2 (dirección no válida) en cada sondeo.
 
 sensor:
   - platform: modbus_controller
@@ -50,91 +51,3 @@ sensor:
     address: 0x7C
     value_type: U_WORD
     entity_category: diagnostic
-
-  - platform: modbus_controller
-    modbus_controller_id: "${devicename}"
-    name: "Diagnóstico R148"
-    id: "${devicename}_diagnostico_r148"
-    icon: mdi:counter
-    register_type: holding
-    address: 0x94
-    value_type: U_WORD
-    entity_category: diagnostic
-    disabled_by_default: true
-
-  - platform: modbus_controller
-    modbus_controller_id: "${devicename}"
-    name: "Diagnóstico R149"
-    id: "${devicename}_diagnostico_r149"
-    icon: mdi:counter
-    register_type: holding
-    address: 0x95
-    value_type: U_WORD
-    entity_category: diagnostic
-    disabled_by_default: true
-
-  - platform: modbus_controller
-    modbus_controller_id: "${devicename}"
-    name: "Diagnóstico R150"
-    id: "${devicename}_diagnostico_r150"
-    icon: mdi:counter
-    register_type: holding
-    address: 0x96
-    value_type: U_WORD
-    entity_category: diagnostic
-    disabled_by_default: true
-
-  - platform: modbus_controller
-    modbus_controller_id: "${devicename}"
-    name: "Diagnóstico R151"
-    id: "${devicename}_diagnostico_r151"
-    icon: mdi:counter
-    register_type: holding
-    address: 0x97
-    value_type: U_WORD
-    entity_category: diagnostic
-    disabled_by_default: true
-
-  - platform: modbus_controller
-    modbus_controller_id: "${devicename}"
-    name: "Diagnóstico R152"
-    id: "${devicename}_diagnostico_r152"
-    icon: mdi:counter
-    register_type: holding
-    address: 0x98
-    value_type: U_WORD
-    entity_category: diagnostic
-    disabled_by_default: true
-
-  - platform: modbus_controller
-    modbus_controller_id: "${devicename}"
-    name: "Diagnóstico R153"
-    id: "${devicename}_diagnostico_r153"
-    icon: mdi:counter
-    register_type: holding
-    address: 0x99
-    value_type: U_WORD
-    entity_category: diagnostic
-    disabled_by_default: true
-
-  - platform: modbus_controller
-    modbus_controller_id: "${devicename}"
-    name: "Diagnóstico R154"
-    id: "${devicename}_diagnostico_r154"
-    icon: mdi:counter
-    register_type: holding
-    address: 0x9A
-    value_type: U_WORD
-    entity_category: diagnostic
-    disabled_by_default: true
-
-  - platform: modbus_controller
-    modbus_controller_id: "${devicename}"
-    name: "Diagnóstico R155"
-    id: "${devicename}_diagnostico_r155"
-    icon: mdi:counter
-    register_type: holding
-    address: 0x9B
-    value_type: U_WORD
-    entity_category: diagnostic
-    disabled_by_default: true

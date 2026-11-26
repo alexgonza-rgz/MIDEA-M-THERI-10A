@@ -28,8 +28,8 @@ views:
                 name: Alarma activa
                 icon: mdi:alert-circle
               - entity: >-
-                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_codigo_de_error_actual
-                name: Código de error
+                  sensor.climatizacion_y_luces_midea_m_theri_ultimate_error_actual_texto
+                name: Error actual
                 icon: mdi:alert
       - type: vertical-stack
         cards:
@@ -168,7 +168,7 @@ views:
         cards:
           - type: tile
             entity: >-
-              sensor.climatizacion_y_luces_midea_m_theri_ultimate_potencia_electrica_instantanea
+              sensor.climatizacion_y_luces_midea_m_theri_ultimate_potencia_electrica_estimada
             name: Potencia eléctrica
             icon: mdi:flash
           - type: tile
@@ -319,37 +319,6 @@ views:
     icon: mdi:chip
     type: masonry
     cards:
-      - type: entities
-        title: Registros RAW
-        show_header_toggle: false
-        entities:
-          - entity: >-
-              sensor.climatizacion_y_luces_midea_m_theri_ultimate_diagnostico_r148
-            name: R148
-          - entity: >-
-              sensor.climatizacion_y_luces_midea_m_theri_ultimate_diagnostico_r148_hex
-            name: R148 HEX
-          - entity: >-
-              sensor.climatizacion_y_luces_midea_m_theri_ultimate_diagnostico_r149
-            name: R149
-          - entity: >-
-              sensor.climatizacion_y_luces_midea_m_theri_ultimate_diagnostico_r150
-            name: R150
-          - entity: >-
-              sensor.climatizacion_y_luces_midea_m_theri_ultimate_diagnostico_r151
-            name: R151
-          - entity: >-
-              sensor.climatizacion_y_luces_midea_m_theri_ultimate_diagnostico_r152
-            name: R152
-          - entity: >-
-              sensor.climatizacion_y_luces_midea_m_theri_ultimate_diagnostico_r153
-            name: R153
-          - entity: >-
-              sensor.climatizacion_y_luces_midea_m_theri_ultimate_diagnostico_r154
-            name: R154
-          - entity: >-
-              sensor.climatizacion_y_luces_midea_m_theri_ultimate_diagnostico_r155
-            name: R155
       - type: entities
         title: Curva climática calculada
         show_header_toggle: false
