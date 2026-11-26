@@ -8,6 +8,8 @@ Lo que falta por validar, mejorar o desarrollar. Lo ya implementado y en uso est
 - Escritura de parámetros avanzados de servicio y límites de temperatura.
 - Potencia eléctrica estimada (V×I): sigue unos 0,15 kW por debajo del medidor externo, con ±10 %. Valorar un medidor dedicado para el COP.
 - Valorar usar la potencia térmica del módulo hidráulico (0x8C) en el COP instantáneo, por tener mejor resolución que las temperaturas de agua de 1 °C. Hoy se compara con la potencia térmica calculada pero no se usa en el COP.
+- Contar la resistencia IBH1 en la energía: crear en HA un contador de energía de «Potencia resistencia apoyo estimada» (`integration`), sus contadores diario y mensual, y COP diario y mensual del sistema: (térmica del equipo + energía de la resistencia) / (eléctrica del equipo + energía de la resistencia). Requiere instalar antes el firmware con el sensor nuevo.
+- Comprobar la potencia real de la resistencia IBH1 (se ha medido unos 3 kW en un solo episodio) y, si algún día se activa, la de TBH (no se calcula).
 - Retirar el sensor temporal «Presión tensión ADC cruda» cuando termine la calibración del sensor de presión.
 
 ## Por descubrir (sniffer Modbus)

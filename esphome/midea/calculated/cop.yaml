@@ -9,8 +9,33 @@
 #   El registro R147 (0x93) y el bloque 1000+ no valen para potencia.
 # - En calefacción: potencia térmica = caudal x (ida - retorno)
 # - En refrigeración: potencia térmica = caudal x (retorno - ida)
+#
+# Resistencia de apoyo IBH1 (${resistencia_apoyo_kw} kW, medida con el Deye el 22/11/2026):
+# entra cuando el compresor se para (por ejemplo, al acabar un ciclo de ACS). Ni la
+# tensión x intensidad de la unidad exterior ni los contadores del equipo la cuentan.
+# - Se suma a la potencia eléctrica estimada.
+# - Si trabaja ella sola (compresor a 0 Hz), toda su potencia sale como calor
+#   (rendimiento 1): el caudal x ΔT no la mide porque el salto de agua es ~0.
+
+substitutions:
+  resistencia_apoyo_kw: "3.0"
 
 sensor:
+  - platform: template
+    name: "Potencia resistencia apoyo estimada"
+    id: "${devicename}_potencia_resistencia_apoyo"
+    icon: mdi:heat-wave
+    unit_of_measurement: "kW"
+    device_class: power
+    state_class: measurement
+    accuracy_decimals: 2
+    update_interval: 10s
+    lambda: |-
+      if (id(${devicename}_resistencia_ibh1).state) {
+        return ${resistencia_apoyo_kw};
+      }
+      return 0.0;
+
   - platform: template
     name: "Delta T agua"
     id: "${devicename}_delta_t_agua"
@@ -48,7 +73,12 @@ sensor:
         return NAN;
       }
 
-      return i * v / 1000.0;
+      float resistencia = id(${devicename}_potencia_resistencia_apoyo).state;
+      if (isnan(resistencia)) {
+        resistencia = 0.0;
+      }
+
+      return i * v / 1000.0 + resistencia;
 
   - platform: template
     name: "Potencia térmica calculada"
@@ -59,6 +89,12 @@ sensor:
     accuracy_decimals: 2
     update_interval: 10s
     lambda: |-
+      // Trabaja solo la resistencia de apoyo: todo su consumo es calor.
+      float hz = id(${devicename}_frecuencia_compresor).state;
+      if (id(${devicename}_resistencia_ibh1).state && (isnan(hz) || hz <= 0)) {
+        return ${resistencia_apoyo_kw};
+      }
+
       if (isnan(id(${devicename}_caudal_agua).state) ||
           isnan(id(${devicename}_temperatura_impulsion_agua).state) ||
           isnan(id(${devicename}_temperatura_retorno_agua).state)) {
@@ -105,8 +141,9 @@ sensor:
       float p_termica = id(${devicename}_potencia_termica_calculada).state;
       float p_electrica = id(${devicename}_potencia_electrica_estimada).state;
 
-      // Si la máquina está parada, devolvemos 0.
-      if (!id(${devicename}_maquina_en_marcha).state) {
+      // Si la máquina está parada y la resistencia apagada, devolvemos 0.
+      if (!id(${devicename}_maquina_en_marcha).state &&
+          !id(${devicename}_resistencia_ibh1).state) {
         return 0.0;
       }
 

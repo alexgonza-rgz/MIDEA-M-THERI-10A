@@ -54,9 +54,10 @@ De izquierda a derecha: ESP32 en placa de prototipos junto a la unidad, sensor d
 ### Calculados
 
 - ΔT del agua.
-- Potencia eléctrica estimada (tensión × intensidad de la unidad exterior).
+- Potencia eléctrica estimada (tensión × intensidad de la unidad exterior, más la resistencia de apoyo IBH1 cuando está activa).
+- Potencia de la resistencia de apoyo estimada (3 kW fijos cuando IBH1 está activa; ajustable con `resistencia_apoyo_kw` en `calculated/cop.yaml`).
 - Potencia térmica calculada a partir de caudal y ΔT, en calefacción, refrigeración y ACS.
-- COP instantáneo (media de 2 minutos) y COP acumulado.
+- COP instantáneo (media de 2 minutos), que incluye la resistencia de apoyo, y COP acumulado, que solo recoge el compresor porque usa los contadores del equipo.
 
 ### Texto, alarmas y diagnóstico
 
@@ -76,7 +77,8 @@ De izquierda a derecha: ESP32 en placa de prototipos junto a la unidad, sensor d
 | Consignas | En uso | Agua zona 1, ambiente y ACS |
 | Sensor de presión | En uso | Calibrado con cuatro puntos frente a un manómetro de 0-6 bar el 01/11/2026; error máximo de 0,06 bar |
 | Potencia eléctrica | En uso (estimada) | Tensión × intensidad. Contrastada con un medidor externo el 02/11/2026: queda unos 0,15 kW por debajo, con ±10 % |
-| COP | En uso | Depende de la potencia eléctrica estimada |
+| COP | En uso | Depende de la potencia eléctrica estimada. El instantáneo incluye la resistencia IBH1; el acumulado y los COP diario y mensual de HA solo recogen el compresor |
+| Resistencia de apoyo IBH1 | En uso (estimada) | Entra cuando el compresor se para (por ejemplo, al acabar un ciclo de ACS) y consume unos 3 kW, medidos con el Deye el 22/11/2026. Ni los contadores del equipo ni la tensión × intensidad la cuentan |
 | Código de error en texto | Implementado | Tabla del manual de servicio de Midea. Falta comprobarlo con un fallo real |
 | Dashboard v1.3 | En uso | Control, Energía, Diagnóstico e Ingeniería |
 | Potencia del módulo hidráulico | En uso (contraste) | El registro 0x8C (kW ×0,01) da valores reales con el compresor en marcha, del orden de la potencia térmica calculada, y 0 con la máquina parada. Al final de un ciclo reacciona con algo de retraso. Todavía no se usa en el COP |
