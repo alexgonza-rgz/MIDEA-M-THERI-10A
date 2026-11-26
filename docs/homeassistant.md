@@ -38,3 +38,19 @@ La plantilla es:
 
 Los contadores del equipo suben en pasos de 1 kWh, así que un COP diario con pocos kWh consumidos tiene mucho redondeo. El mensual es más fiable. El COP acumulado de ESPHome es el de toda la vida del contador del equipo.
 
+### Si un contador mensual se dispara
+
+Los contadores `utility_meter` interpretan un valor menor que el anterior como un reinicio del contador. Si el equipo pasa por «no disponible» y devuelve 0 un instante, al recuperarse el contador suma el valor completo: el 21/11/2026 el consumo mensual pasó de 55 a 22.303 kWh y el COP mensual quedó igual al COP de toda la vida del equipo.
+
+Para evitarlo, `midea/sensors/energy.yaml` descarta los valores 0 de **Energía eléctrica consumida** y **Energía térmica producida** con `filter_out: 0`.
+
+Si ocurre de nuevo, se corrige con el servicio `utility_meter.calibrate` (Herramientas para desarrolladores → Acciones), con el consumo real del periodo:
+
+```yaml
+action: utility_meter.calibrate
+target:
+  entity_id: sensor.<contador mensual>
+data:
+  value: 72   # kWh reales del periodo (contador del equipo hoy menos el valor al empezar el periodo)
+```
+

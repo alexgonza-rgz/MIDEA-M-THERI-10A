@@ -22,6 +22,10 @@ sensor:
     filters:
       - lambda: return x * 0.01;
 
+  # Contadores de energía del equipo. Nunca valen 0: un 0 puntual (primera lectura
+  # tras reconectar) se descarta, porque Home Assistant lo toma como un reinicio del
+  # contador y los contadores diarios y mensuales (utility_meter) sumarían el valor
+  # completo al recuperarse (ocurrió el 21/11/2026).
   - platform: modbus_controller
     modbus_controller_id: "${devicename}"
     name: "Energía eléctrica consumida"
@@ -33,6 +37,8 @@ sensor:
     unit_of_measurement: "kWh"
     device_class: energy
     state_class: total_increasing
+    filters:
+      - filter_out: 0
 
   - platform: modbus_controller
     modbus_controller_id: "${devicename}"
@@ -45,3 +51,5 @@ sensor:
     unit_of_measurement: "kWh"
     device_class: energy
     state_class: total_increasing
+    filters:
+      - filter_out: 0

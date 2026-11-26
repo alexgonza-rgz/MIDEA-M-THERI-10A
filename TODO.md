@@ -26,7 +26,6 @@ Lo que falta por validar, mejorar o desarrollar. Lo ya implementado y en uso est
 - Esquema eléctrico en imagen (ESP32, RS485, sensor de presión y divisor) y capturas de los logs de ESPHome.
 - Actualizar las capturas del dashboard (muestran todavía los registros RAW retirados).
 - Posible integración del fan coil Midea con controlador KJRP-75A/BK-E por RS485.
-- Añadir `CHANGELOG.md`.
 
 ## Hecho
 
