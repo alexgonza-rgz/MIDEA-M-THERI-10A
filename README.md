@@ -2,9 +2,9 @@
 
 # Midea M-Theri Ultimate en ESPHome
 
-### Control y monitorizaciÃ³n local mediante ESP32, RS485 y Modbus RTU
+### Control y monitorización local mediante ESP32, RS485 y Modbus RTU
 
-![Version](https://img.shields.io/badge/Version-v2.0.0-blue)
+![Version](https://img.shields.io/badge/Version-v2.0.1-blue)
 ![ESPHome](https://img.shields.io/badge/ESPHome-Compatible-00C853)
 ![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Compatible-41BDF5)
 ![Modbus](https://img.shields.io/badge/Modbus-RTU-orange)
@@ -12,71 +12,101 @@
 
 </div>
 
-IntegraciÃ³n local para una aerotermia **Midea M-Theri Ultimate 10 A**. Un ESP32 conectado al bus RS485 permite leer estados y temperaturas, controlar las funciones principales y publicar las entidades en Home Assistant mediante ESPHome, sin depender de la nube de Midea.
+Integración local para una aerotermia **Midea M-Theri Ultimate 10 A**. Un ESP32 conectado al bus RS485 lee estados, temperaturas y presiones, controla las funciones principales y publica las entidades en Home Assistant mediante ESPHome, sin depender de la nube de Midea.
 
-La configuraciÃ³n incluida es la que estÃ¡ instalada y funcionando en la unidad usada para desarrollar el proyecto. Los registros de ingenierÃ­a y los controles todavÃ­a no validados estÃ¡n identificados como experimentales.
+La configuración incluida es **la que está instalada y funcionando** en la unidad usada para desarrollar el proyecto (última sincronización: 26 de noviembre de 2026). Lo que todavía no está validado figura como pendiente o experimental en [Estado de validación](#estado-de-validación) y en [TODO](TODO.md).
+
+## Instalación real
+
+<p align="center">
+  <img src="docs/images/PCB%20prototipo%20ESPHOME.jpeg" alt="ESP32 con el módulo RS485 montado junto a la unidad" height="320">
+  <img src="docs/images/sensor%20de%20presion%20unidad%20interior.jpeg" alt="Sensor de presión instalado en un racor de latón de la unidad interior" height="320">
+  <img src="docs/images/cableado%20pantalla%20unidad%20interior.jpeg" alt="Conexión al bus H1/H2 en la placa de la pantalla de la unidad interior" height="320">
+</p>
+
+De izquierda a derecha: ESP32 en placa de prototipos junto a la unidad, sensor de presión en el circuito de calefacción y conexión al bus H1/H2 en la placa de la pantalla.
 
 ## Funciones incluidas
 
 ### Control
 
-- Modo Auto, Frío y Calor.
-- Activación independiente de climatización de zona 1 y ACS.
-- Consigna activa de agua de zona 1.
-- Consigna ambiente y consigna de ACS.
-- Curva climática de zona 1.
-- Modo ECO y modo silencioso.
+- Modo de trabajo: Auto, Frío y Calor.
+- Activación independiente de climatización de zona 1 y de ACS.
+- Consigna de agua de zona 1 (5-65 °C; en Frío se limita a 5-25 °C y en Calor a 35-65 °C).
+- Consigna ambiente (17-30 °C) y consigna de ACS (20-60 °C).
+- Curva climática de zona 1: activación y selección de curva de calefacción y de refrigeración (0-9).
+- Modo ECO, modo silencioso, nivel de silencioso alto y nivel modo silencioso (0-2).
 - ACS rápida.
-- Selección del tipo de emisor de zona 1.
+- Tipo de emisor de zona 1 para calefacción y para refrigeración (fancoil, radiador o suelo radiante).
+- Botón para reiniciar el ESP32.
 
-### MonitorizaciÃ³n
+### Monitorización
 
-- Temperaturas de impulsión, retorno, exterior y depósito de ACS.
-- Caudal y presión del circuito de calefacción.
-- Frecuencia del compresor y velocidad del ventilador exterior.
-- Presiones y temperaturas del circuito frigorÃ­fico.
-- Estados de bomba, válvula de ACS, resistencias, desescarche y alarma.
-- Energí­a consumida y producida.
-- Potencia tÃ©rmica calculada, COP instantáneo y COP acumulado.
-- Registros RAW para diagnóstico.
+- Temperaturas de impulsión, retorno, exterior, descarga del compresor y depósito de ACS.
+- Temperaturas del circuito frigorífico (T1, T1B, T2, T2B, T3, Ta) y del módulo inverter.
+- Caudal de agua y presión del circuito de calefacción en bar.
+- Frecuencia real y objetivo del compresor, velocidad del ventilador exterior, apertura de la válvula PMV y horas de compresor.
+- Presiones alta y baja del refrigerante en kPa.
+- Intensidad y tensión de la unidad exterior, y corriente y tensión del bus DC.
+- Estados de compresor, bomba interna y exterior, válvula de ACS, resistencias IBH1 y TBH, desescarche, retorno de aceite, curva climática, ACS rápida y alarma.
+- Energía eléctrica consumida y energía térmica producida.
 
-## Estado de validaciÃ³n
+### Calculados
+
+- ΔT del agua.
+- Potencia eléctrica estimada (tensión × intensidad de la unidad exterior).
+- Potencia térmica calculada a partir de caudal y ΔT, en calefacción, refrigeración y ACS.
+- COP instantáneo (media de 2 minutos) y COP acumulado.
+
+### Texto, alarmas y diagnóstico
+
+- **Estado real**: Apagada, Desescarche, Retorno de aceite, ACS, Frío, Calor o En espera.
+- **Resumen aerotermia**: una línea con estado, ida, retorno, ACS, compresor, caudal, COP y presión.
+- **Error actual (texto)**: convierte el código numérico de fallo en su código y descripción (por ejemplo, `E0 – Fallo de caudal de agua`). Consulta [Códigos de error](docs/errores.md).
+- Avisos de presión del circuito de calefacción: baja por debajo de 0,8 bar y alta por encima de 1,8 bar, porque la válvula de seguridad abre a 2 bar.
+- Diagnóstico del ESP32: tiempo activo, señal Wi-Fi, memoria libre, fragmentación, tiempo de bucle y motivo del último reinicio.
+
+## Estado de validación
 
 | Área | Estado | Observaciones |
 |---|---|---|
-| ComunicaciÃ³n Modbus | En uso | 9600 8N1, esclavo 1, actualizaciÃ³n cada 10 s |
+| Comunicación Modbus | En uso | 9600 8N1, esclavo 1, sondeo cada 10 s. Energías, horas de compresor y curvas se leen cada 60 s |
 | Lecturas principales | En uso | Temperaturas, caudal, compresor, estados y ACS |
-| ClimatizaciÃ³n zona 1 | En uso | Bit independiente del ACS; la automatizaciÃ³n debe actuar sobre su interruptor |
+| Climatización zona 1 | En uso | Bit independiente del ACS; la automatización debe actuar sobre su interruptor |
 | Consignas | En uso | Agua zona 1, ambiente y ACS |
-| Sensor de presiÃ³n | En uso | AlimentaciÃ³n 5 V, seÃ±al verde y calibraciÃ³n propia |
-| Dashboard v1.3 | En uso | Control, EnergÃ­a, DiagnÃ³stico e IngenierÃ­a |
-| Potencia elÃ©ctrica instantÃ¡nea | Experimental | Registro 0x93 pendiente de contrastar con medidor externo |
-| Potencia del mÃ³dulo hidrÃ¡ulico | Pendiente de confirmar | Revisar la interpretaciÃ³n del registro 0x8C |
-| Controles avanzados | Experimental | Smart Grid, purga, antilegionela y doble zona no implementados |
+| Sensor de presión | En uso | Calibrado con cuatro puntos frente a un manómetro de 0-6 bar el 01/11/2026; error máximo de 0,06 bar |
+| Potencia eléctrica | En uso (estimada) | Tensión × intensidad. Contrastada con un medidor externo el 02/11/2026: queda unos 0,15 kW por debajo, con ±10 % |
+| COP | En uso | Depende de la potencia eléctrica estimada |
+| Código de error en texto | Implementado | Tabla del manual de servicio de Midea. Falta comprobarlo con un fallo real |
+| Dashboard v1.3 | En uso | Control, Energía, Diagnóstico e Ingeniería |
+| Potencia del módulo hidráulico | Sin datos útiles | El registro 0x8C lee siempre 0 |
+| Registros 0x93 y 0x94-0x9B | Retirados | 0x93 no da valores reales y 0x94-0x9B responden con excepción Modbus 2 |
+| Registros 0x12, 0x13, 0x16 y 0x17 | Retirados | Excepción Modbus 2 («dirección no válida») en esta unidad |
+| Controles avanzados | No implementados | Smart Grid, purga, antilegionela, vacaciones y zona 2 |
+
+El sensor «Presión tensión ADC cruda (temporal)» se conserva solo para recalibrar y debe retirarse cuando termine la calibración.
 
 ## Hardware
 
 ### Necesario
 
 - ESP32 `esp32dev`.
-- Transceptor RS485 compatible con lÃ³gica de 3,3 V, por ejemplo MAX3485.
+- Transceptor RS485 compatible con lógica de 3,3 V, por ejemplo MAX3485.
 - Fuente estable para el ESP32.
 - Acceso a los terminales H1/H2 de la Midea.
 
-### Sensor de presiÃ³n instalado
+### Sensor de presión (opcional)
 
-- Alimentación a 5 V.
-- Cable rojo: +5 V.
-- Cable negro: GND comÃºn con el ESP32.
-- Cable verde: seÃ±al analógica.
-- Divisor: 10 k ohms en serie y 20 k ohms a GND.
-- Entrada ADC: GPIO34.
+- Sensor analógico de 0-5 bar con salida de 0,5-4,25 V y alimentación de 8,5-30 V (aquí, 24 V).
+- Cable rojo: +24 V.
+- Cable negro: GND de la fuente de 24 V y GND común con el ESP32.
+- Cable azul: señal, a través de un divisor de 10 kΩ en serie y 20 kΩ a GND.
+- Entrada ADC: GPIO34, con atenuación de 12 dB.
+- Una lectura por debajo de 0,2 V se trata como sensor desconectado y se publica «sin dato», no 0 bar.
 
-El sensor de presión es opcional. La calibración incluida corresponde a la instalación original y debe ajustarse si cambia el sensor, el divisor o el ESP32.
+La calibración incluida corresponde a esta instalación y debe repetirse si cambia el sensor, el divisor o el ESP32. Consulta [Cableado](docs/wiring.md).
 
-Consulta [Cableado](docs/wiring.md) para ver el conexionado completo.
-
-## ComunicaciÃ³n RS485
+## Comunicación RS485
 
 | Parámetro | Valor |
 |---|---|
@@ -85,114 +115,116 @@ Consulta [Cableado](docs/wiring.md) para ver el conexionado completo.
 | Datos | 8 bits |
 | Paridad | Ninguna |
 | Parada | 1 bit |
-| DirecciÃ³n | `0x01` |
+| Dirección | `0x01` |
 | TX ESP32 | GPIO17 |
 | RX ESP32 | GPIO16 |
 | DE + /RE | GPIO4 |
-| Intervalo de actualizaciÃ³n | 10 s |
-| Espera entre comandos | 200 ms |
+| Intervalo de actualización | 10 s |
+| Espera entre comandos | 200 ms (`send_wait_time` y `turnaround_time`) |
 
 ## Estructura
 
 ```text
 MIDEA-M-THERI-10A/
- esphome/
- aerotermia.yaml
- midea/
- core/
- control/
- sensors/
- states/
- calculated/
- engineering/
- dashboards/
- dashboard_principal_V1.2.yaml
- dashboard_v1.3.yaml
- docs/
- examples/
- ROADMAP.md
- TODO.md
- VERIFY.md
+├── esphome/
+│   ├── aerotermia.yaml
+│   └── midea/
+│       ├── core/            base del ESP32 y Modbus
+│       ├── control/         selectores, consignas e interruptores
+│       ├── sensors/         temperaturas, hidráulica, compresor, energía y diagnóstico
+│       ├── states/          sensores binarios y de texto
+│       ├── calculated/      presión, COP y curva climática
+│       └── engineering/     registros internos y código de error
+├── dashboards/              dashboard_v1.3.yaml (actual) y dashboard_principal_V1.2.yaml
+├── docs/                    cableado, registros, errores, Home Assistant e imágenes
+├── examples/
+├── ROADMAP.md
+├── TODO.md
+└── VERIFY.md
 ```
 
-`aerotermia.yaml` carga el resto de los archivos como paquetes. No es necesario unirlos en un Ãºnico YAML.
+`aerotermia.yaml` carga el resto de los archivos como paquetes y aplica ajustes con `!extend` (aviso de presión alta a 1,8 bar y lectura más espaciada de los datos lentos). No es necesario unirlos en un único YAML.
 
-## InstalaciÃ³n rÃ¡pida
+## Instalación rápida
 
-1. Copia la carpeta `esphome/midea/` a `/homeassistant/esphome/midea/`.
-2. Copia `esphome/aerotermia.yaml` a `/homeassistant/esphome/aerotermia.yaml`.
-3. AÃ±ade al `secrets.yaml` de ESPHome:
+1. Copia la carpeta `esphome/midea/` a la carpeta `esphome/` de tu Home Assistant (la que usa el add-on ESPHome).
+2. Copia `esphome/aerotermia.yaml` a esa misma carpeta.
+3. Añade al `secrets.yaml` de ESPHome estos valores:
 
 ```yaml
 wifi_ssid: "NOMBRE_WIFI"
-wifi_password: "CONTRASEÃ‘A_WIFI"
+wifi_password: "CONTRASEÑA_WIFI"
+ota_password: "CONTRASEÑA_OTA"
+fallback_password: "CONTRASEÑA_PUNTO_DE_ACCESO"
+aerotermia__encryption_key: "CLAVE_API_BASE64_DE_32_BYTES"
 ```
 
-4. Revisa GPIO, polaridad RS485 y cableado del sensor de presiÃ³n.
+4. Revisa GPIO, polaridad RS485 y cableado del sensor de presión.
 5. Valida `aerotermia.yaml` en ESPHome.
-6. Instala el firmware y aÃ±ade el dispositivo descubierto a Home Assistant.
+6. Instala el firmware y añade el dispositivo descubierto a Home Assistant.
 
-La instalaciÃ³n original tambiÃ©n utiliza cifrado de la API de ESPHome. Puede aÃ±adirse localmente sin publicar la clave:
+El proyecto se ha probado con ESPHome 2026.10.2 y el framework ESP-IDF.
 
-```yaml
-api:
-  encryption:
-    key: !secret aerotermia__encryption_key
-```
+### Seguridad del firmware
 
-Consulta la [guÃ­a de instalaciÃ³n](docs/installation.md) para el procedimiento completo.
+- La API de ESPHome va cifrada.
+- La actualización OTA exige contraseña (`ota_password`).
+- El panel web del ESP32 (puerto 80) pide usuario `admin` y la misma contraseña OTA.
+- Si no hay Wi-Fi, el ESP32 crea el punto de acceso `Aerotermia-Setup`, protegido con `fallback_password`.
 
 ## Dashboard
 
-La versiÃ³n actual es [`dashboards/dashboard_v1.3.yaml`](dashboards/dashboard_v1.3.yaml) e incluye cuatro vistas:
+La versión actual es [`dashboards/dashboard_v1.3.yaml`](dashboards/dashboard_v1.3.yaml) e incluye cuatro vistas:
 
 - Control.
-- EnergÃ­a.
-- DiagnÃ³stico.
-- IngenierÃ­a.
+- Energía.
+- Diagnóstico.
+- Ingeniería.
 
-Los identificadores de entidad del dashboard corresponden a la instalaciÃ³n original y comienzan por `climatizacion_y_luces_midea_m_theri_ultimate_`. Si Home Assistant genera otros identificadores, deben sustituirse antes de importar el dashboard.
+Los identificadores de entidad del dashboard corresponden a la instalación original y comienzan por `climatizacion_y_luces_midea_m_theri_ultimate_`. Si Home Assistant genera otros identificadores, deben sustituirse antes de importar el dashboard.
+
+Las capturas de `docs/images/dashboard_resumen.png` y `docs/images/dashboard_diagnostico.png` son de una versión anterior: todavía muestran los registros RAW R148-R155, ya retirados.
 
 Consulta [Uso en Home Assistant](docs/homeassistant.md) y [Dashboards](dashboards/README.md).
 
-## AutomatizaciÃ³n de demanda y ACS
+## Automatización de demanda y ACS
 
-La calefacciÃ³n de zona 1 y el ACS son bits independientes del registro `0x00`:
+La calefacción de zona 1 y el ACS son bits independientes del registro `0x00`:
 
-| FunciÃ³n | MÃ¡scara |
+| Función | Máscara |
 |---|---:|
-| ClimatizaciÃ³n zona 1 | `0x0002` |
+| Climatización zona 1 | `0x0002` |
 | ACS | `0x0004` |
 
-Para detener la calefacciÃ³n sin apagar el ACS se debe apagar solamente la entidad **CalefacciÃ³n y refrigeraciÃ³n zona 1**. No debe utilizarse `climate.turn_off`, el modo HVAC `off` ni una escritura completa de valor `0`.
+Para detener la calefacción sin apagar el ACS se debe apagar solamente la entidad **Calefacción y refrigeración zona 1**. No debe utilizarse `climate.turn_off`, el modo HVAC `off` ni una escritura completa de valor `0`.
 
-Consulta [Automatizaciones](docs/automations.md) para ver un ejemplo seguro basado en una demanda global `1/0`.
+Los interruptores no publican un estado falso antes de leer Modbus y no escriben sobre registros compartidos hasta haberlos leído.
 
-## DocumentaciÃ³n
+## Documentación
 
-- [InstalaciÃ³n](docs/installation.md)
+- [Códigos de error y cómo se resetean](docs/errores.md)
 - [Cableado](docs/wiring.md)
-- [Mapa de registros implementados](docs/registers.md)
+- [Mapa de registros Modbus](docs/registers.md)
 - [Home Assistant](docs/homeassistant.md)
-- [Automatizaciones](docs/automations.md)
-- [ResoluciÃ³n de problemas](docs/troubleshooting.md)
+- [Dashboards](dashboards/README.md)
 - [Tareas pendientes](TODO.md)
 - [Roadmap](ROADMAP.md)
-- [VerificaciÃ³n de la documentaciÃ³n](VERIFY.md)
+- [Verificación de la documentación](VERIFY.md)
 
 ## Seguridad
 
-- Desconecta completamente la unidad interior y exterior antes de manipular el bus o la electrÃ³nica.
-- No conectes directamente una seÃ±al superior a 3,3 V a un GPIO del ESP32.
-- Conserva una copia de los valores originales antes de escribir registros de configuraciÃ³n.
-- No publiques `secrets.yaml`, claves de API, contraseÃ±as Wi-Fi ni copias de seguridad de Home Assistant.
+- Desconecta completamente la unidad interior y exterior antes de manipular el bus o la electrónica.
+- No conectes directamente una señal superior a 3,3 V a un GPIO del ESP32.
+- Conserva una copia de los valores originales antes de escribir registros de configuración.
+- No publiques `secrets.yaml`, claves de API, contraseñas Wi-Fi ni copias de seguridad de Home Assistant.
 - Los registros marcados como experimentales deben probarse de forma controlada.
+- No resetees un error sin haber comprobado antes su causa.
 
 ## Compatibilidad
 
 | Equipo | Estado |
 |---|---|
-| Midea M-Theri Ultimate 10 A | Validado en la instalaciÃ³n original |
+| Midea M-Theri Ultimate 10 A | Validado en la instalación original |
 | ESP32 `esp32dev` con ESP-IDF | En uso |
 | Home Assistant + ESPHome | En uso |
 | Otros modelos Midea M-Thermal/M-Theri | No validados por este proyecto |
@@ -201,4 +233,4 @@ Consulta [Automatizaciones](docs/automations.md) para ver un ejemplo seguro basa
 
 Este proyecto se distribuye bajo licencia [GPL-3.0](LICENSE).
 
-El uso y la modificaciÃ³n de registros Modbus se realizan bajo responsabilidad de quien instala el proyecto.
+El uso y la modificación de registros Modbus se realizan bajo responsabilidad de quien instala el proyecto.

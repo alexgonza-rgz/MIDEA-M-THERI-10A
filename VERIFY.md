@@ -1,20 +1,10 @@
-# Verificación v1.2
+# Verificación de la documentación
 
-Resultado: OK
+Revisión del 26 de noviembre de 2026 (v2.0.1).
 
-## Comprobaciones
-
-- Estructura GitHub profesional creada.
-- Carpeta `docs/` del repositorio original conservada.
-- Configuración ESPHome movida a `esphome/`.
-- `aerotermia.yaml` comprobado contra sus `!include`.
-- Dashboards preparados en `dashboards/`.
-- Carpetas futuras creadas: `tools/`, `examples/`, `scripts/`.
-
-## Errores
-
-- Ninguno
-
-## Archivos totales
-
-51
+- La carpeta `esphome/` coincide con la configuración en uso en Home Assistant.
+- README, TODO y ROADMAP actualizados a lo realmente implementado.
+- Corregida la codificación de caracteres del README (UTF-8).
+- Añadido `docs/errores.md`.
+- Los registros R148-R155, 0x93 y 0x94-0x9B figuran como retirados.
+- No se ha compilado el firmware en esta revisión.

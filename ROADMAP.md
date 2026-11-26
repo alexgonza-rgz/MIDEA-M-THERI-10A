@@ -1,4 +1,4 @@
-# 🚀 ROADMAP
+# ROADMAP
 
 ## v1.1 — Estabilidad
 
@@ -7,22 +7,25 @@
 - [x] Validar curva climática zona 1.
 - [x] Documentar desfases normales por actualización secuencial Modbus.
 
-## v1.2 — Dashboard profesional
+## v1.2 — Dashboard
 
 - [x] Reorganizar estructura del repositorio.
-- [ ] Crear dashboard principal.
-- [ ] Crear dashboard diagnóstico.
-- [ ] Crear dashboard ingeniería.
-- [ ] Crear dashboard servicio.
+- [x] Dashboard principal (`dashboard_principal_V1.2.yaml`).
 
-## v1.3 — Ingeniería
+## v1.3 — Dashboard completo
 
-- [ ] Comparador de registros.
-- [ ] Detección de bits.
-- [ ] Exportación de capturas.
+- [x] Dashboard v1.3 con Control, Energía, Diagnóstico e Ingeniería.
+- [ ] Dashboard de servicio.
 
-## v2.0 — Base de datos Modbus
+## v2.0 — Instalación en producción
 
-- [ ] Documentar registros confirmados.
-- [ ] Documentar registros pendientes.
-- [ ] Generar YAML desde base de datos.
+- [x] Sensor de presión calibrado.
+- [x] Potencia eléctrica estimada y COP.
+- [x] API cifrada, OTA con contraseña y diagnóstico del ESP32.
+- [x] Error actual en texto (v2.0.1).
+- [ ] Documentar registros pendientes (ver [TODO](TODO.md)).
+
+## Ideas futuras
+
+- Comparador de registros y detección de bits.
+- Generar el YAML desde una base de datos de registros.
