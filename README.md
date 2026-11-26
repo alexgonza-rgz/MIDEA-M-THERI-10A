@@ -79,7 +79,7 @@ De izquierda a derecha: ESP32 en placa de prototipos junto a la unidad, sensor d
 | COP | En uso | Depende de la potencia eléctrica estimada |
 | Código de error en texto | Implementado | Tabla del manual de servicio de Midea. Falta comprobarlo con un fallo real |
 | Dashboard v1.3 | En uso | Control, Energía, Diagnóstico e Ingeniería |
-| Potencia del módulo hidráulico | Sin datos útiles | El registro 0x8C lee siempre 0 |
+| Potencia del módulo hidráulico | En uso (contraste) | El registro 0x8C (kW ×0,01) da valores reales con el compresor en marcha, del orden de la potencia térmica calculada, y 0 con la máquina parada. Al final de un ciclo reacciona con algo de retraso. Todavía no se usa en el COP |
 | Registros 0x93 y 0x94-0x9B | Retirados | 0x93 no da valores reales y 0x94-0x9B responden con excepción Modbus 2 |
 | Registros 0x12, 0x13, 0x16 y 0x17 | Retirados | Excepción Modbus 2 («dirección no válida») en esta unidad |
 | Controles avanzados | No implementados | Smart Grid, purga, antilegionela, vacaciones y zona 2 |

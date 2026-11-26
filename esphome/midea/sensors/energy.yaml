@@ -3,8 +3,9 @@
 # ==================================================
 # La potencia eléctrica instantánea se calcula en calculated/cop.yaml
 # (tensión x intensidad). El registro R147 (0x93) se retiró: no da valores reales.
-# La potencia térmica del módulo hidráulico (0x8C) se mantiene por petición,
-# aunque hasta ahora siempre ha leído 0.
+# La potencia térmica del módulo hidráulico (0x8C, kW x 0,01) da valores reales con
+# el compresor en marcha (contrastada con la potencia térmica calculada) y 0 con la
+# máquina parada. No se usa en el COP: se mantiene para comparar y decidir más adelante.
 
 sensor:
   - platform: modbus_controller

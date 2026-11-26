@@ -7,6 +7,7 @@ Lo que falta por validar, mejorar o desarrollar. Lo ya implementado y en uso est
 - Texto de **Error actual**: comprobar la tabla con un fallo real (ver [errores](docs/errores.md)).
 - Escritura de parámetros avanzados de servicio y límites de temperatura.
 - Potencia eléctrica estimada (V×I): sigue unos 0,15 kW por debajo del medidor externo, con ±10 %. Valorar un medidor dedicado para el COP.
+- Valorar usar la potencia térmica del módulo hidráulico (0x8C) en el COP instantáneo, por tener mejor resolución que las temperaturas de agua de 1 °C. Hoy se compara con la potencia térmica calculada pero no se usa en el COP.
 - Retirar el sensor temporal «Presión tensión ADC cruda» cuando termine la calibración del sensor de presión.
 
 ## Por descubrir (sniffer Modbus)
@@ -17,7 +18,7 @@ Lo que falta por validar, mejorar o desarrollar. Lo ya implementado y en uso est
 - Modo vacaciones.
 - Zona 2.
 - Curvas climáticas por registros 0x12, 0x13, 0x16 y 0x17: en esta unidad responden con excepción Modbus 2.
-- Potencia del módulo hidráulico (0x8C lee siempre 0) y registros 0x94-0x9B (excepción 2).
+- Registros 0x94-0x9B (excepción 2).
 
 ## Mejoras
 
@@ -25,7 +26,7 @@ Lo que falta por validar, mejorar o desarrollar. Lo ya implementado y en uso est
 - Esquema eléctrico en imagen (ESP32, RS485, sensor de presión y divisor) y capturas de los logs de ESPHome.
 - Actualizar las capturas del dashboard (muestran todavía los registros RAW retirados).
 - Posible integración del fan coil Midea con controlador KJRP-75A/BK-E por RS485.
-- Añadir `CHANGELOG.md` y `.gitignore` para `secrets.yaml`.
+- Añadir `CHANGELOG.md`.
 
 ## Hecho
 
